@@ -215,32 +215,11 @@
   }
 
   .navbar-area {
-    gap: 1.25m;
-  }
-
-  .icon-navbar label {
-    cursor: pointer;
-    position: relative;
-  }
-
-  .icon-navbar label img {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 35px;
-    height: 35px;
+    gap: 1.25em;
   }
 
   .navbar-title h1 {
     font-size: 1.9em;
-  }
-
-  .icon-menu {
-    display: block;
-  }
-
-  #menu:checked ~ .navbar-logo .icon-menu {
-    display: none;
   }
 
   .navbar-menu {
@@ -251,15 +230,52 @@
     background-color: #fefefe;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
     position: fixed;
-    top: 48px;
+    top: 60px;
+    left: 0;
     width: 100%;
+
     flex-direction: column;
     gap: 0;
+
     max-height: 0;
     opacity: 0;
     overflow: hidden;
     transform: translateY(-10px);
-    transition: all 0.4s ease-in-out;
+
+    transition: all 0.35s ease;
+    z-index: 999;
+  }
+
+  .navbar-menu.open ul {
+    max-height: 500px;
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .mobile-sub a {
+    border-top: none;
+    background: linear-gradient(
+      to right,
+      rgba(13, 59, 102, 0.08),
+      rgba(30, 96, 145, 0.12)
+    );
+    color: #0d3b66;
+    transition: background 0.25s ease, color 0.25s ease;
+  }
+
+  .mobile-sub a:hover,
+  .mobile-sub a:active {
+    background: linear-gradient(
+      to right,
+      rgba(13, 59, 102, 0.18),
+      rgba(30, 96, 145, 0.22)
+    );
+    color: #0a2c4d;
+  }
+
+  .mobile-sub li + li {
+    border-top: 1px solid rgba(13, 59, 102, 0.28);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
   }
 
   .navbar-menu ul li {
@@ -274,26 +290,6 @@
     justify-content: center;
     padding: 1em;
     border-top: 1px solid #ddd;
-  }
-
-  #menu:checked ~ .navbar-menu ul {
-    margin-top: 0.7em;
-    max-height: 500px;
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  #menu:checked ~ .navbar-logo .icon-close {
-    display: block;
-  }
-
-  #menu:checked ~ .navbar-logo .overlay {
-    display: block;
-    height: 100%;
-    width: 100%;
-    position: fixed;
-    top: 0;
-    left: 0;
   }
 
   /* Hero */
@@ -542,11 +538,6 @@
     font-size: 1.7em;
   }
 
-  .navbar-logo label img {
-    width: 33px;
-    height: 33px;
-  }
-
   /* Hero */
   .hero-content {
     width: 85%;
@@ -756,11 +747,6 @@
   /* Navbar */
   .navbar-title h1 {
     font-size: 1.6em;
-  }
-
-  .navbar-logo label img {
-    width: 32px;
-    height: 32px;
   }
 
   /* Hero */

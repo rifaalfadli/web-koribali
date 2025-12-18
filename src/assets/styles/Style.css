@@ -251,6 +251,24 @@ body {
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
 }
 
+.icon-navbar {
+  display: flex;
+  align-items: center;
+}
+
+.icon-toggle {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #1a1a1a;
+  transition: transform 0.25s ease, color 0.25s ease;
+}
+
+.icon-toggle:hover {
+  color: #1e6091;
+  transform: scale(1.1);
+}
+
 /* =======================
   DROPDOWN (DESKTOP)
    ======================= */
@@ -371,14 +389,58 @@ body {
 /* =======================
   MOBILE DROPDOWN
    ======================= */
-.mobile-sub a {
-  padding-left: 2.5em !important;
+.mobile-dropdown {
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
 .mobile-dropdown-title {
-  font-weight: bold;
-  padding: 0.8em 1.5em;
-  color: #444;
+  width: 100%;
+  text-align: center;
+  padding: 1em;
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+  color: black;
+  border-top: 1px solid #ddd;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+}
+
+.mobile-chevron {
+  transition: transform 0.25s ease;
+}
+
+.mobile-chevron.open {
+  transform: rotate(180deg);
+}
+
+/* Tools item behave like normal menu link */
+.mobile-dropdown {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.mobile-dropdown-title {
+  width: 100%;
+  text-align: center;
+  padding: 1em;
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+  color: black;
+  border-top: 1px solid #ddd;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+}
+
+.mobile-dropdown-title:active,
+.mobile-sub a:active {
+  background-color: #f3f4f6;
 }
 
 /* Hero */

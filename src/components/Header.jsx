@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import ProfileMenu from "./ProfileMenu";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Menu, X } from "lucide-react";
 import "../assets/styles/Style.css";
 import "../assets/styles/Responsive.css";
 
 export default function Header() {
   const [isMobile, setIsMobile] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(false);
+  const [mobileToolsOpen, setMobileToolsOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Update otomatis kalau layar di-resize
   useEffect(() => {
@@ -16,6 +18,13 @@ export default function Header() {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  useEffect(() => {
+    if (!isMobile) {
+      setMobileMenuOpen(false);
+      setMobileToolsOpen(false);
+    }
+  }, [isMobile]);
 
   // ================================
   //  Tampilan untuk layar besar
@@ -30,7 +39,7 @@ export default function Header() {
       )}
 
       <nav className="navbar">
-        <input type="checkbox" id="menu" />
+        {/* <input type="checkbox" id="menu" /> */}
         <div className="navbar-logo">
           <div className="logo">
             <Link to="/">
@@ -50,13 +59,13 @@ export default function Header() {
             </div>
           </div>
 
-          <label htmlFor="menu" className="icon-menu">
+          {/* <label htmlFor="menu" className="icon-menu">
             <img src="/images/icon-menu.svg" alt="icon menu" />
           </label>
           <label htmlFor="menu" className="icon-close">
             <img src="/images/icon-close.svg" alt="icon close" />
           </label>
-          <label htmlFor="menu" className="overlay"></label>
+          <label htmlFor="menu" className="overlay"></label> */}
         </div>
 
         <div className="navbar-area">
@@ -118,9 +127,9 @@ export default function Header() {
   //  Tampilan untuk layar kecil
   // ================================
   const MobileHeader = () => (
-    <header>
+    <header className="header">
       <nav className="navbar">
-        <input type="checkbox" id="menu" />
+        {/* <input type="checkbox" id="menu" /> */}
         <div className="navbar-logo">
           <div className="logo">
             <Link to="/">
@@ -141,7 +150,7 @@ export default function Header() {
           </div>
 
           <div className="navbar-area">
-            <div className="icon-navbar">
+            {/* <div className="icon-navbar">
               <label htmlFor="menu" className="icon-menu">
                 <img src="/images/icon-menu.svg" alt="icon menu" />
               </label>
@@ -149,12 +158,22 @@ export default function Header() {
                 <img src="/images/icon-close.svg" alt="icon close" />
               </label>
               <label htmlFor="menu" className="overlay"></label>
+            </div> */}
+            <div className="icon-navbar">
+              <button
+                className="icon-toggle"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                aria-label="Toggle menu"
+              >
+                {mobileMenuOpen ? <X size={26} /> : <Menu size={26} />}
+              </button>
             </div>
+
             <ProfileMenu />
           </div>
         </div>
 
-        <div className="navbar-menu">
+        <div className={`navbar-menu ${mobileMenuOpen ? "open" : ""}`}>
           <ul>
             <li>
               <Link to="/">Home</Link>
@@ -168,15 +187,47 @@ export default function Header() {
             <li>
               <Link to="/galeri">Gallery</Link>
             </li>
-            <li>
-              <span className="mobile-dropdown-title">Tools</span>
+
+            <li
+              className="mobile-dropdown"
+              onClick={() => setMobileToolsOpen(!mobileToolsOpen)}
+            >
+              <span className="mobile-dropdown-title">
+                Tools
+                <ChevronDown
+                  size={16}
+                  className={`mobile-chevron ${mobileToolsOpen ? "open" : ""}`}
+                />
+              </span>
             </li>
-            <li className="mobile-sub">
-              <Link to="/calculation">— Calculation</Link>
-            </li>
-            <li className="mobile-sub">
-              <Link to="/report">— Report</Link>
-            </li>
+
+            {mobileToolsOpen && (
+              <>
+                <li className="mobile-sub">
+                  <Link
+                    to="/calculation"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      setMobileToolsOpen(false);
+                    }}
+                  >
+                    Calculation
+                  </Link>
+                </li>
+                <li className="mobile-sub">
+                  <Link
+                    to="/report"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      setMobileToolsOpen(false);
+                    }}
+                  >
+                    Report
+                  </Link>
+                </li>
+              </>
+            )}
+
             <li>
               <Link to="/kontak">Contact</Link>
             </li>
