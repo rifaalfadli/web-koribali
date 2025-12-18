@@ -271,6 +271,8 @@ export function PoleCalculator() {
 
     setResults(calculatedResults);
     setShowResults(true);
+    const target = document.getElementById("results-section");
+    target?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   // FUNCTION: Full validation before navigating to the report page.
@@ -797,12 +799,14 @@ export function PoleCalculator() {
           </div>
         </div>
         {/* TABEL HASIL KALKULASI */}
-        {showResults && (
-          <ResultsTable
-            results={results}
-            onMakeReport={handleMakeReport} // pakai navigate
-          />
-        )}
+        <div id="results-section">
+          {showResults && (
+            <ResultsTable
+              results={results}
+              onMakeReport={handleMakeReport} // pakai navigate
+            />
+          )}
+        </div>
       </div>
       {/* TOAST MODAL */}
       {toast && (
