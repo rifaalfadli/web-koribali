@@ -20,8 +20,8 @@ function App() {
       <ScrollToTop />
       <Routes>
         {/* Public routes */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route path="login" element={<Login />} />
+        <Route path="register" element={<Register />} />
 
         {/* Protected Route */}
         <Route
@@ -38,8 +38,8 @@ function App() {
           <Route path="galeri" element={<Galeri />} />
           <Route path="kontak" element={<Kontak />} />
           <Route path="profile" element={<ProfilePage />} />
-          <Route path="/calculation" element={<Calculation />} />
-          <Route path="/report" element={<Report />} />
+          <Route path="calculation" element={<Calculation />} />
+          <Route path="report" element={<Report />} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>
