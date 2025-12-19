@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { FileText, FileSpreadsheet, CheckCircle2 } from "lucide-react";
 
-export function ResultsTable({ results, onMakeReport }) {
+export function ResultsTable({ results, onCoverInput }) {
   const [page] = useState(0);
   const r = results[page]; // current section
 
@@ -24,7 +24,7 @@ export function ResultsTable({ results, onMakeReport }) {
           </div>
 
           <button
-            onClick={onMakeReport}
+            onClick={onCoverInput}
             className="flex items-center gap-2 px-5 py-2.5 
             bg-white text-[#0d3b66] rounded-xl 
             shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105 border-2 border-transparent"

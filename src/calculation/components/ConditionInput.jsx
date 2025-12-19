@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { RotateCcw, Circle, CheckCircle } from "lucide-react";
 
-export function ConditionInput({ condition, onUpdate }) {
+export function ConditionInput({ condition, onUpdate, onNext }) {
   // State to track whether all condition fields are filled
   const [isComplete, setIsComplete] = useState(false);
 
@@ -80,25 +80,30 @@ export function ConditionInput({ condition, onUpdate }) {
           </button>
 
           {/* COMPLETION STATUS BADGE */}
-          <div
-            className={`flex items-center gap-2 px-7 py-3  h-[48px] rounded-xl border font-medium ${
-              isComplete
-                ? "bg-green-50 border-green-500 text-green-700"
-                : "bg-gray-50 border-gray-300 text-gray-600"
-            }`}
-          >
-            {/* Status Icon */}
-            {isComplete ? (
-              <CheckCircle className="w-5 h-5 text-green-500" />
-            ) : (
-              <Circle className="w-5 h-5 text-gray-400" />
-            )}
 
-            {/* Status Text */}
-            <span className="font-medium">
-              {isComplete ? "Complete" : "Incomplete"}
-            </span>
-          </div>
+          {/* Status Icon */}
+          <button
+            onClick={onNext}
+            className="flex items-center gap-2 px-8 py-3 h-[48px] 
+            bg-gradient-to-r from-[#0d3b66] to-[#3399cc]
+            text-white rounded-xl 
+            hover:brightness-110 transition-all shadow-sm font-medium"
+          >
+            Next Input
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
+          </button>
         </div>
       </div>
     </div>

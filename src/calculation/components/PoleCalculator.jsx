@@ -1,10 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { PoleInput } from "./PoleInput";
 import { ResultsTable } from "./ResultsTable";
 import { useNavigate, useLocation } from "react-router-dom";
 import { CoverInput } from "./CoverInput";
 import { ConditionInput } from "./ConditionInput";
 import { calculatePoleResults } from "../utils/calculationResults";
+import {
+  goToNextSection,
+  updateCover,
+  isCoverComplete,
+  updateCondition,
+  isConditionComplete,
+  addSection,
+} from "../utils/poleCalculatorUtils";
 import {
   Plus,
   Calculator,
@@ -53,7 +61,7 @@ export function PoleCalculator() {
             id: "1", // unique section ID
             name: "", // pole name or description
             material: "STK400", // default material
-            poleType: "Taper", // Taper or Straight
+            poleType: "Straight", // Taper or Straight
             diameterLower: "", // lower diameter
             diameterUpper: "", // upper diameter (Taper only)
             thicknessLower: "", // lower thickness
@@ -102,75 +110,107 @@ export function PoleCalculator() {
   // const [showReport, setShowReport] = useState(false); // toggle report page
   const [toast, setToast] = useState(null); // toast notifications { message, type }
   const [confirmDelete, setConfirmDelete] = useState(null); // section deletion confirmation
-  const [isExpandedCover, setIsExpandedCover] = useState(true); // expand/collapse cover input
+
+  // STATE: Cover popup
+  const [showCoverPopup, setShowCoverPopup] = useState(false);
+
   const [isExpandedPole, setIsExpandedPole] = useState(true); // expand/collapse pole input
   const [isExpandedCondition, setIsExpandedCondition] = useState(true); // expand/collapse condition input
   const [confirmResetAll, setConfirmResetAll] = useState(false); // reset all confirmation
 
+  // Generates unique section IDs and syncs with sessionStorage on mount
+  const sectionIdRef = useRef(1);
+  useEffect(() => {
+    const saved = sessionStorage.getItem("sections");
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (parsed.length > 0) {
+        sectionIdRef.current = Math.max(...parsed.map((s) => Number(s.id)));
+      }
+    }
+  }, []);
+  useEffect(() => {
+    if (sections.length === 0) return;
+    const isActiveValid = sections.some((s) => s.id === activeTab);
+    if (!isActiveValid) {
+      setActiveTab(sections[0].id);
+    }
+  }, [sections, activeTab]);
+
   // ========================= Function for CoverInput =========================
   // FUNCTION: Update cover data
-  const updateCover = (updates) => {
-    setCover({ ...cover, ...updates });
+  const handleCoverUpdate = (updates) => {
+    updateCover(cover, updates, setCover);
   };
 
   // FUNCTION: Check if cover information form is complete
-  const isCoverComplete = () => {
-    const fields = [
-      cover.managementMark,
-      cover.calculationNumber,
-      cover.projectName,
-      cover.contentr2,
-      cover.date,
-    ];
-    return fields.every((v) => v && v.trim() !== "");
+  const handleIsCoverComplete = () => {
+    return isCoverComplete(cover);
+  };
+
+  // FUNCTION: Open Cover Input from ResultsTable
+  const handleOpenCoverPopup = () => {
+    setShowCoverPopup(true);
+  };
+
+  const handleCloseCoverPopup = () => {
+    setShowCoverPopup(false);
   };
 
   // ======================= Function for ConditionInput ========================
   // FUNCTION: Update condition data
-  const updateCondition = (updates) => {
-    setCondition({ ...condition, ...updates });
+  const handleConditionUpdate = (updates) => {
+    updateCondition(condition, updates, setCondition);
   };
 
   // FUNCTION: Check if condition information form is complete
-  const isConditionComplete = () => {
-    const fields = [condition.designStandard, condition.windSpeed];
-    return fields.every((v) => v && v.trim() !== "");
+  const handleIsConditionComplete = () => {
+    return isConditionComplete(condition);
+  };
+
+  // FUNCTION: Go to Pole Input after Condition
+  const handleConditionNext = () => {
+    // Tutup section condition
+    setIsExpandedCondition(false);
+
+    // Buka section pole
+    setIsExpandedPole(true);
+
+    // Optional: scroll ke pole section
+    setTimeout(() => {
+      document
+        .getElementById("pole-section-title")
+        ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 300);
   };
 
   // ========================== Function for PoleInput ==========================
   // FUNCTION: Add a new section (max 4 section)
-  const addSection = () => {
-    if (sections.length < 4) {
-      const newId = (sections.length + 1).toString();
-      setSections([
-        ...sections,
-        {
-          id: newId,
-          name: "",
-          material: "STK400",
-          poleType: "Taper",
-          diameterLower: "",
-          diameterUpper: "",
-          thicknessLower: "",
-          thicknessUpper: "",
-          height: "",
-          quantity: "1",
-        },
-      ]);
-      setActiveTab(newId); // set newly added section as active
-    }
+  const handleAddSection = () => {
+    addSection(sections, setSections, setActiveTab, sectionIdRef);
   };
 
   // FUNCTION: Remove a section by ID
   const removeSection = (id) => {
-    if (sections.length > 1) {
-      const newSections = sections.filter((s) => s.id !== id);
-      setSections(newSections);
+    if (sections.length <= 1) return;
 
-      // if deleted section was active, set first section active
-      if (activeTab === id) {
-        setActiveTab(newSections[0].id);
+    const index = sections.findIndex((s) => s.id === id);
+    const newSections = sections.filter((s) => s.id !== id);
+
+    setSections(newSections);
+
+    if (activeTab === id) {
+      let newIndex;
+
+      if (index > 0) {
+        // ambil section sebelumnya
+        newIndex = index - 1;
+      } else {
+        // kalau hapus index 0 → ambil yang sekarang di 0
+        newIndex = 0;
       }
+
+      setActiveTab(newSections[newIndex].id);
     }
   };
 
@@ -200,11 +240,8 @@ export function PoleCalculator() {
   };
 
   // FUNCTION: Go to the next section tab
-  const goToNextSection = () => {
-    const currentIndex = sections.findIndex((s) => s.id === activeTab);
-    if (currentIndex < sections.length - 1) {
-      setActiveTab(sections[currentIndex + 1].id);
-    }
+  const handleNextSection = () => {
+    goToNextSection(sections, activeTab, setActiveTab);
   };
 
   // FUNCTION: Check if a section pole is complete
@@ -237,32 +274,17 @@ export function PoleCalculator() {
   // ========================== Function for All Form ==========================
   // FUNCTION: Perform calculation for all form
   const calculateResults = () => {
-    // VALIDATION: cover information
-    if (!isCoverComplete()) {
-      showToast("Please complete all Cover Information fields!");
-      return;
-    }
-
     // VALIDATION: condition information
-    if (!isConditionComplete()) {
+    if (!handleIsConditionComplete()) {
       showToast("Please complete all Condition Information fields!");
       return;
     }
 
     // VALIDATION: each section pole
     for (let section of sections) {
-      if (
-        section.name.trim() === "" ||
-        section.diameterLower.trim() === "" ||
-        (section.poleType === "Taper" && section.diameterUpper.trim() === "") ||
-        section.thicknessLower.trim() === "" ||
-        (section.poleType === "Taper" &&
-          section.thicknessUpper.trim() === "") ||
-        section.height.trim() === "" ||
-        section.quantity.trim() === ""
-      ) {
+      if (!isSectionComplete(section)) {
         showToast("Please complete all Section Pole fields!");
-        return; // stop kalkulasi
+        return;
       }
     }
 
@@ -283,12 +305,12 @@ export function PoleCalculator() {
       return;
     }
     // CHECK 2: CoverInput is still incomplete
-    if (!isCoverComplete()) {
+    if (!handleIsCoverComplete()) {
       showToast("Please complete all Cover Information before making report!");
       return;
     }
     // CHECK 3: ConditionInput is still incomplete
-    if (!isConditionComplete()) {
+    if (!handleIsConditionComplete()) {
       showToast(
         "Please complete all Condition Information before making report!"
       );
@@ -337,7 +359,7 @@ export function PoleCalculator() {
         id: "1",
         name: "",
         material: "STK400",
-        poleType: "Taper",
+        poleType: "Straight",
         diameterLower: "",
         diameterUpper: "",
         thicknessLower: "",
@@ -349,9 +371,9 @@ export function PoleCalculator() {
 
     // Reset active tab ke section 1
     setActiveTab("1");
+    sectionIdRef.current = 1;
 
     // Reset UI control
-    setIsExpandedCover(true);
     setIsExpandedCondition(true);
     setIsExpandedPole(true);
 
@@ -420,20 +442,6 @@ export function PoleCalculator() {
             <RotateCcw className="w-5 h-5" />
             <span>Reset All</span>
           </button>
-
-          {/* Calculate All */}
-          <button
-            onClick={calculateResults}
-            className="flex items-center gap-2 
-            bg-gradient-to-r from-[#1a6fa3] to-[#3399cc] text-white 
-            px-7 py-2 rounded-lg font-medium shadow-md
-            hover:from-[#165c88] hover:to-[#2c82ad] hover:shadow-xl
-            active:scale-95
-            transition-all duration-200 ease-out"
-          >
-            <Calculator className="w-5 h-5" />
-            <span>Calculate All</span>
-          </button>
         </div>
       </div>
 
@@ -483,41 +491,6 @@ export function PoleCalculator() {
       ============================================================ */}
       <div className="max-w-[84rem] mx-auto pt-1 pb-8">
         {/* ============================================================
-          FORM COVER (Bagian "Input Cover Information")
-        ============================================================ */}
-        <div
-          className={`bg-gradient-to-r from-[#0d3b66] to-[#3399cc] p-5 flex items-center justify-between cursor-pointer mt-8 transition-all duration-500 ease-in-out ${
-            isExpandedCover ? "rounded-t-2xl" : "rounded-2xl"
-          }`}
-          onClick={() => setIsExpandedCover(!isExpandedCover)}
-        >
-          {/* Judul cover */}
-          <div className="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/20">
-            <h2 className="text-white font-bold">Input Cover Information</h2>
-          </div>
-
-          {/* Icon toggle (up/down) */}
-          <div className="p-2">
-            {isExpandedCover ? (
-              <ChevronUp className="w-5 h-5 text-white" />
-            ) : (
-              <ChevronDown className="w-5 h-5 text-white" />
-            )}
-          </div>
-        </div>
-
-        {/* Body form (collapsible) */}
-        <div
-          className={`transition-all duration-500 ease-in-out overflow-hidden ${
-            isExpandedCover
-              ? "max-h-[500px] rounded-b-2xl"
-              : "max-h-0 rounded-b-2xl"
-          }`}
-        >
-          <CoverInput cover={cover} onUpdate={updateCover} />
-        </div>
-
-        {/* ============================================================
           FORM CONDITION (Bagian kondisi perhitungan)
         ============================================================ */}
         <div
@@ -529,7 +502,7 @@ export function PoleCalculator() {
           {/* Judul cover */}
           <div className="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/20">
             <h2 className="text-white font-bold">
-              Input Condition Calculation
+              Input Standard and Condition
             </h2>
           </div>
 
@@ -551,7 +524,11 @@ export function PoleCalculator() {
               : "max-h-0 rounded-b-2xl"
           }`}
         >
-          <ConditionInput condition={condition} onUpdate={updateCondition} />
+          <ConditionInput
+            condition={condition}
+            onUpdate={handleConditionUpdate}
+            onNext={handleConditionNext}
+          />
         </div>
 
         {/* ============================================================
@@ -565,7 +542,9 @@ export function PoleCalculator() {
         >
           {/* Judul cover */}
           <div className="bg-white/10 backdrop-blur-sm px-4 py-2 rounded-lg border border-white/20">
-            <h2 className="text-white font-bold">Input Sections Pole</h2>
+            <h2 id="pole-section-title" className="text-white font-bold">
+              Input Step Pole
+            </h2>
           </div>
 
           {/* Icon toggle (up/down) */}
@@ -592,12 +571,12 @@ export function PoleCalculator() {
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h2 className="text-[#0d3b66] font-medium">
-                    Configure up to 4 pole sections with detailed specifications
+                    Configure up to 4 pole step with detailed specifications
                   </h2>
                 </div>
                 {/* BUTTON ADD SECTION */}
                 <button
-                  onClick={addSection}
+                  onClick={handleAddSection}
                   disabled={sections.length >= 4}
                   className={`flex items-center gap-3 px-7 py-3 text-base rounded-xl transition-all shadow-md 
                   ${
@@ -607,7 +586,7 @@ export function PoleCalculator() {
                   }`}
                 >
                   <Plus className="w-5 h-5" />
-                  Add Section
+                  Add Step
                 </button>
               </div>
 
@@ -637,7 +616,7 @@ export function PoleCalculator() {
                             <Circle className="w-5 h-5" />
                           )}
                           <div className="text-left">
-                            <div>Section {index + 1}</div>
+                            <div>Step {index + 1}</div>
                           </div>
                         </div>
 
@@ -677,12 +656,12 @@ export function PoleCalculator() {
 
                   {/* Title */}
                   <h2 className="text-gray-900 text-center mb-2">
-                    Delete Section?
+                    Delete Step?
                   </h2>
 
                   {/* Description */}
                   <p className="text-gray-600 text-center mb-6">
-                    Are you sure you want to delete this section? This action
+                    Are you sure you want to delete this step? This action
                     cannot be undone.
                   </p>
 
@@ -767,13 +746,23 @@ export function PoleCalculator() {
                     {/* CALCULATE / NEXT BUTTON */}
                     <div className="relative">
                       {/* CONDITIONAL BUTTON */}
-                      {!isOnlySection && !isLastSection && (
+                      {isOnlySection || isLastSection ? (
                         <button
-                          onClick={goToNextSection}
+                          onClick={calculateResults}
+                          className="flex items-center gap-3 px-8 py-3 h-[48px] bg-gradient-to-r
+                        from-[#0d3b66] to-[#3399cc] text-white rounded-xl hover:shadow-xl transition-transform duration-300 hover:scale-105
+                        transition-all font-semibold shadow-md"
+                        >
+                          <Calculator className="w-5 h-5" />
+                          Calculate Results
+                        </button>
+                      ) : (
+                        <button
+                          onClick={handleNextSection}
                           className="flex items-center gap-2 px-8 py-3 h-[48px] 
-                          bg-gradient-to-r from-[#0d3b66] to-[#3399cc]
-                          text-white rounded-xl 
-                          hover:brightness-110 transition-all shadow-sm font-medium"
+                        bg-gradient-to-r from-[#0d3b66] to-[#3399cc]
+                        text-white rounded-xl 
+                        hover:brightness-110 transition-all shadow-sm font-medium"
                         >
                           Next Section
                           <svg
@@ -803,11 +792,40 @@ export function PoleCalculator() {
           {showResults && (
             <ResultsTable
               results={results}
-              onMakeReport={handleMakeReport} // pakai navigate
+              onCoverInput={handleOpenCoverPopup}
             />
           )}
         </div>
       </div>
+      {showCoverPopup && (
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center">
+          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-3xl mx-4 overflow-hidden animate-fadeIn">
+            {/* HEADER */}
+            <div className="bg-gradient-to-r from-[#0d3b66] to-[#3399cc] p-5 flex items-center justify-between">
+              <h2 className="text-white font-bold text-lg">
+                Input Cover Information
+              </h2>
+
+              <button
+                onClick={handleCloseCoverPopup}
+                className="text-white hover:bg-white/20 rounded-lg p-2 transition"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            {/* BODY */}
+            <div className="p-6 max-h-[70vh] overflow-y-auto">
+              <CoverInput
+                cover={cover}
+                onUpdate={handleCoverUpdate}
+                onMake={handleMakeReport}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* TOAST MODAL */}
       {toast && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 transition-opacity duration-300 ease-in-out">

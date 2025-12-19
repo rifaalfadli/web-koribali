@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { RotateCcw, Circle, CheckCircle } from "lucide-react";
 
-export function CoverInput({ cover, onUpdate }) {
+export function CoverInput({ cover, onUpdate, onMake }) {
   // State to mark whether all mandatory fields have been filled in
   const [isComplete, setIsComplete] = useState(false);
 
@@ -75,8 +75,8 @@ export function CoverInput({ cover, onUpdate }) {
           </div>
 
           {/* FIELD: Project Name */}
-          <div>
-            <label className="block text-gray-700 mb-2">Project Name</label>
+          <div className="md:col-span-2">
+            <label className="block text-gray-700 mb-2">Line 1</label>
             <input
               type="text"
               value={cover.projectName}
@@ -86,8 +86,8 @@ export function CoverInput({ cover, onUpdate }) {
           </div>
 
           {/* FIELD: Content Row 2 */}
-          <div>
-            <label className="block text-gray-700 mb-2">Content Row 2</label>
+          <div className="md:col-span-2">
+            <label className="block text-gray-700 mb-2">Line 2</label>
             <input
               type="text"
               value={cover.contentr2}
@@ -97,9 +97,9 @@ export function CoverInput({ cover, onUpdate }) {
           </div>
 
           {/* FIELD: Content Row 3 (Optional) */}
-          <div>
+          <div className="md:col-span-2">
             <label className="block text-gray-700 mb-2">
-              Content Row 3 (Optional)
+              Line 3 (Optional)
             </label>
             <input
               type="text"
@@ -110,7 +110,7 @@ export function CoverInput({ cover, onUpdate }) {
           </div>
 
           {/* FIELD: Document Date */}
-          <div>
+          <div className="md:col-span-2">
             <label className="block text-gray-700 mb-2">Document Date</label>
             <input
               type="date"
@@ -137,25 +137,28 @@ export function CoverInput({ cover, onUpdate }) {
           </button>
 
           {/* COMPLETION STATUS BADGE */}
-          <div
-            className={`flex items-center gap-2 px-7 py-3  h-[48px] rounded-xl border font-medium ${
-              isComplete
-                ? "bg-green-50 border-green-500 text-green-700"
-                : "bg-gray-50 border-gray-300 text-gray-600"
-            }`}
+          <button
+            onClick={onMake}
+            className="flex items-center gap-2 px-8 py-3 h-[48px] 
+            bg-gradient-to-r from-[#0d3b66] to-[#3399cc]
+            text-white rounded-xl 
+            hover:brightness-110 transition-all shadow-sm font-medium"
           >
-            {/* Status Icon */}
-            {isComplete ? (
-              <CheckCircle className="w-5 h-5 text-green-500" />
-            ) : (
-              <Circle className="w-5 h-5 text-gray-400" />
-            )}
-
-            {/* Status Text */}
-            <span className="font-medium">
-              {isComplete ? "Complete" : "Incomplete"}
-            </span>
-          </div>
+            Make Report
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
+          </button>
         </div>
       </div>
     </div>
