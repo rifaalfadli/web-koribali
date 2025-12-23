@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion"; // <--- ditambahkan
+import { motion } from "framer-motion";
 import "../assets/styles/Style.css";
 import "../assets/styles/Responsive.css";
 
@@ -9,17 +9,7 @@ export default function GaleriSection() {
   const galeriRef = useRef(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [scrollIndex, setScrollIndex] = useState(0);
-  const images = [14, 15, 16, 17, 18, 19, 20, 21, 22];
-
-  const handleHover = (index) => {
-    setActiveIndex(index);
-    // Scroll otomatis ke gambar yang di-hover
-    const container = galeriRef.current;
-    const scrollAmount =
-      (container.scrollWidth - container.clientWidth) *
-      (index / (images.length - 1));
-    container.scrollTo({ left: scrollAmount, behavior: "smooth" });
-  };
+  const images = [14, 15, 16, 17, 18, 19, 21, 22];
 
   const scrollLeft = () => {
     galeriRef.current.scrollBy({ left: -300, behavior: "smooth" });
@@ -81,7 +71,6 @@ export default function GaleriSection() {
             <motion.figure
               key={num}
               className={`galeri-card ${activeIndex === index ? "active" : ""}`}
-              onMouseEnter={() => handleHover(index)}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
