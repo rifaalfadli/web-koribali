@@ -12,9 +12,6 @@
   margin: 0 auto 1em;
   font-size: 9.5pt;
   position: relative;
-
-  /* display: flex;
-  flex-direction: column; */
 }
 
 .latin {
@@ -23,16 +20,12 @@
 
 /* header di dalam margin atas 15mm */
 .page-header {
-  /* margin: 15mm 15mm 0mm 20mm; */
   text-align: right;
   font-size: 9.5pt;
 }
 
 /* konten utama */
 .page-content {
-  /* flex: 1;
-  margin: 0mm 15mm 15mm 20mm; */
-
   line-height: 1.5;
 }
 
@@ -44,7 +37,6 @@
 }
 
 .page-content-border {
-  /* margin-top: 15mm; */
   border: 3px solid rgba(0, 0, 0, 1);
 }
 
@@ -60,13 +52,6 @@
   border: 3px solid rgba(0, 0, 0, 1);
   box-sizing: border-box;
 }
-
-/* .jp {
-  font-family: "Hina Mincho", "Yu Mincho", "Hiragino Mincho ProN", "MS Mincho",
-    "Noto Serif JP", serif;
-  font-weight: 400;
-  font-style: normal;
-} */
 
 /* ===== Cover Page ===== */
 .cover-row-1 {
@@ -99,7 +84,6 @@
 
 .cover-inner-text {
   font-size: 12pt;
-  padding: 7px 0; /* jarak kecil sebelum garis */
   white-space: nowrap; /* supaya tidak pecah baris */
   letter-spacing: 0.05em;
   color: blue;
@@ -127,7 +111,6 @@
 /* ===== Page 1 ===== */
 .page1-content {
   font-size: 9.5pt;
-  /* letter-spacing: 0.1em; */
   line-height: 1.8;
 }
 

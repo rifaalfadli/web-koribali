@@ -28,15 +28,19 @@ export default function A4Pages({ cover, condition, results, pages }) {
 
           {/* Project information block */}
           <div className="cover-double-line">
-            <p className="cover-inner-text cover-inner-text-line text-center jp">
+            <p className="cover-inner-text cover-inner-text-line text-center py-[7px] jp">
               {cover.projectName}
             </p>
-            <p className="cover-inner-text cover-inner-text-line text-center jp">
-              {cover.contentr2}
+            <p
+              className={`cover-inner-text cover-inner-text-line text-center jp ${
+                !cover.contentr2 ? "py-[19px]" : "py-[7px]"
+              }`}
+            >
+              {cover.contentr2 || ""}
             </p>
             <p
-              className={`cover-inner-text text-center jp ${
-                !cover.contentr3 ? "mb-[25px]" : ""
+              className={`cover-inner-text text-center jp py-[7px] ${
+                !cover.contentr3 ? "mb-[24px]" : ""
               }`}
             >
               {cover.contentr3 || ""}
