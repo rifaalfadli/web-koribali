@@ -7,6 +7,7 @@ export const CoverInputModal = ({
   cover,
   onUpdateCover,
   onMakeReport,
+  coverErrors,
 }) => {
   if (!open) return null;
 
@@ -14,9 +15,9 @@ export const CoverInputModal = ({
     <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center">
       <div className="bg-white rounded-3xl shadow-2xl w-full max-w-3xl mx-4 overflow-hidden animate-fadeIn">
         {/* HEADER */}
-        <div className="bg-gradient-to-r from-[#0d3b66] to-[#3399cc] p-5 flex items-center justify-between">
+        <div className="bg-gradient-to-r from-[#0d3b66] to-[#3399cc] p-4 flex items-center justify-between">
           <div className="bg-white/10 backdrop-blur-sm px-3 py-2 rounded-lg border border-white/20">
-            <h2 className="text-white font-bold text-[18px]">
+            <h2 className="text-white font-bold text-[16px]">
               Input Cover Information
             </h2>
           </div>
@@ -35,6 +36,7 @@ export const CoverInputModal = ({
             cover={cover}
             onUpdate={onUpdateCover}
             onMake={onMakeReport}
+            errors={coverErrors}
           />
         </div>
       </div>

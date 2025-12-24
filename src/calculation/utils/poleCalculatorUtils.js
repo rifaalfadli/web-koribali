@@ -1,5 +1,27 @@
 import { calculatePoleResults } from "./calculationResults";
 
+// ========================= Global Helpers =========================
+// FUNCTION: check if a value is empty
+export const isEmpty = (value) => {
+  return !value || value.trim() === "";
+};
+
+// FUNCTION: helper to clear errors per field
+export const clearError = (updates, setErrors) => {
+  setErrors((prev) => {
+    const next = { ...prev };
+
+    Object.entries(updates).forEach(([key, value]) => {
+      // kalau sudah ada isi → error = false
+      if (value && value.toString().trim() !== "") {
+        next[key] = false;
+      }
+    });
+
+    return next;
+  });
+};
+
 // ========================= Function for CoverInput =========================
 // FUNCTION: Update cover data
 export const updateCover = (cover, updates, setCover) => {
@@ -12,10 +34,17 @@ export const isCoverComplete = (cover) => {
     cover.managementMark,
     cover.calculationNumber,
     cover.projectName,
-    cover.contentr2,
     cover.date,
   ].every((v) => v && v.trim() !== "");
 };
+
+// FUNCTION: Create an error checker helper for the cover
+export const getCoverErrors = (cover) => ({
+  managementMark: isEmpty(cover.managementMark),
+  calculationNumber: isEmpty(cover.calculationNumber),
+  projectName: isEmpty(cover.projectName),
+  date: isEmpty(cover.date),
+});
 
 // ======================= Function for ConditionInput ========================
 // FUNCTION: Update condition data
@@ -38,6 +67,12 @@ export const conditionNext = (setIsExpandedCondition, setIsExpandedPole) => {
   // Open section pole
   setIsExpandedPole(true);
 };
+
+// FUNCTION: Create an error checker helper for the condition
+export const getConditionErrors = (condition) => ({
+  designStandard: isEmpty(condition.designStandard),
+  windSpeed: isEmpty(condition.windSpeed),
+});
 
 // ========================== Function for PoleInput ==========================
 // FUNCTION: Add a new section (max 4 section)
@@ -161,6 +196,63 @@ export const isSectionComplete = (section) => {
   return false; // fallback
 };
 
+// FUNCTION: Create an error checker helper for the section
+export const getSectionsErrors = (sections) => {
+  const allErrors = {};
+
+  sections.forEach((section) => {
+    const e = {
+      name: isEmpty(section.name),
+      height: isEmpty(section.height),
+      quantity: isEmpty(section.quantity),
+      diameterLower: false,
+      diameterUpper: false,
+      thicknessLower: false,
+      thicknessUpper: false,
+    };
+
+    if (section.poleType === "Taper") {
+      e.diameterLower = isEmpty(section.diameterLower);
+      e.diameterUpper = isEmpty(section.diameterUpper);
+      e.thicknessLower = isEmpty(section.thicknessLower);
+      e.thicknessUpper = isEmpty(section.thicknessUpper);
+    } else {
+      e.diameterLower = isEmpty(section.diameterLower);
+      e.thicknessLower = isEmpty(section.thicknessLower);
+    }
+
+    if (Object.values(e).some(Boolean)) {
+      allErrors[section.id] = e;
+    }
+  });
+
+  return allErrors;
+};
+
+// FUNCTION: clear error for a specific section
+export const clearSectionError = (sectionId, updates, setSectionsErrors) => {
+  setSectionsErrors((prev) => {
+    const next = { ...prev };
+    const sectionError = { ...(next[sectionId] || {}) };
+
+    Object.entries(updates).forEach(([key, value]) => {
+      if (value && value.toString().trim() !== "") {
+        sectionError[key] = false;
+      }
+    });
+
+    // kalau semua error false → hapus object error section
+    const hasError = Object.values(sectionError).some(Boolean);
+    if (hasError) {
+      next[sectionId] = sectionError;
+    } else {
+      delete next[sectionId];
+    }
+
+    return next;
+  });
+};
+
 // ========================== Function for All Form ==========================
 // FUNCTION: Perform calculation for all form
 export const handleCalculateResults = (
@@ -171,18 +263,31 @@ export const handleCalculateResults = (
   setResults,
   setShowResults
 ) => {
+  const errors = {
+    condition: false,
+    section: false,
+  };
+
   // VALIDATION: condition information
   if (!handleIsConditionComplete()) {
     showToast("Please complete all Condition Information fields!");
-    return;
+    errors.condition = true;
   }
 
   // VALIDATION: each section pole
   for (let section of sections) {
     if (!handleIsSectionComplete(section)) {
       showToast("Please complete all Section Pole fields!");
-      return;
+      errors.section = true;
+      break;
     }
+  }
+
+  const isValid = Object.values(errors).every((v) => v === false);
+
+  // STOP kalau tidak valid
+  if (!isValid) {
+    return { isValid, errors };
   }
 
   // FUNCTION: Calculate results for all pole sections
@@ -190,8 +295,9 @@ export const handleCalculateResults = (
 
   setResults(calculatedResults);
   setShowResults(true);
+
   // ALL CHECK PASSED
-  return true;
+  return { isValid, errors };
 };
 
 // FUNCTION: Full validation before navigating to the report page
@@ -203,34 +309,47 @@ export const makeReport = (
   sections,
   handleIsSectionComplete
 ) => {
-  // CHECK 1: If there are no calculation results yet
+  const errors = {
+    results: false,
+    cover: false,
+    condition: false,
+    section: false,
+  };
+
+  // CHECK 1: Results
   if (results.length === 0) {
     showToast("No calculation results to generate report!");
-    return;
+    errors.results = true;
   }
-  // CHECK 2: CoverInput is still incomplete
+
+  // CHECK 2: Cover
   if (!handleIsCoverComplete()) {
     showToast("Please complete all Cover Information before making report!");
-    return;
+    errors.cover = true;
   }
-  // CHECK 3: ConditionInput is still incomplete
+
+  // CHECK 3: Condition
   if (!handleIsConditionComplete()) {
     showToast(
       "Please complete all Condition Information before making report!"
     );
-    return;
+    errors.condition = true;
   }
-  // CHECK 4: Section (PoleInput) is still empty
+
+  // CHECK 4: Sections
   for (let section of sections) {
     if (!handleIsSectionComplete(section)) {
       showToast(
         "Please complete all Section Pole fields before making report!"
       );
-      return;
+      errors.section = true;
+      break;
     }
   }
-  // ALL CHECK PASSED
-  return true;
+
+  const isValid = Object.values(errors).every((v) => v === false);
+
+  return { isValid, errors };
 };
 
 // FUNCTION: Full validation before navigating to the report page

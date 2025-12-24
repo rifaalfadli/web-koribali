@@ -25,6 +25,11 @@ import {
   handleCalculateResults,
   makeReport,
   deleteReport,
+  clearError,
+  clearSectionError,
+  getCoverErrors,
+  getConditionErrors,
+  getSectionsErrors,
 } from "../utils/poleCalculatorUtils";
 import {
   Plus,
@@ -55,12 +60,14 @@ export function PoleCalculator() {
           date: "",
         };
   });
+  const [coverErrors, setCoverErrors] = useState({});
 
   // STATE: Condition for calculation (wind, standard)
   const [condition, setCondition] = useState(() => {
     const saved = sessionStorage.getItem("condition");
     return saved ? JSON.parse(saved) : { designStandard: "", windSpeed: "" };
   });
+  const [conditionErrors, setConditionErrors] = useState({});
 
   // STATE: Sections input, each section represents one pole
   const [sections, setSections] = useState(() => {
@@ -82,6 +89,7 @@ export function PoleCalculator() {
           },
         ];
   });
+  const [sectionsErrors, setSectionsErrors] = useState({});
 
   // STATE: Results all calculation
   const [results, setResults] = useState(() => {
@@ -136,6 +144,7 @@ export function PoleCalculator() {
       }
     }
   }, []);
+
   // Ensure activeTab always points to an existing section
   useEffect(() => {
     if (sections.length === 0) return;
@@ -149,6 +158,7 @@ export function PoleCalculator() {
   // FUNCTION: Update cover data
   const handleCoverUpdate = (updates) => {
     updateCover(cover, updates, setCover);
+    clearError(updates, setCoverErrors);
   };
 
   // FUNCTION: Check if cover information form is complete
@@ -170,6 +180,7 @@ export function PoleCalculator() {
   // FUNCTION: Update condition data
   const handleConditionUpdate = (updates) => {
     updateCondition(condition, updates, setCondition);
+    clearError(updates, setConditionErrors);
   };
 
   // FUNCTION: Check if condition information form is complete
@@ -196,6 +207,7 @@ export function PoleCalculator() {
   // FUNCTION: Update a specific section's data
   const handleUpdateSection = (id, updates) => {
     updateSection(id, updates, setSections, sections);
+    clearSectionError(id, updates, setSectionsErrors);
   };
 
   // FUNCTION: Reset the active section to default values
@@ -216,7 +228,7 @@ export function PoleCalculator() {
   // ========================== Function for All Form ==========================
   // FUNCTION: Perform calculation for all form
   const calculateResults = () => {
-    const isValid = handleCalculateResults(
+    const { isValid, errors } = handleCalculateResults(
       handleIsConditionComplete,
       showToast,
       sections,
@@ -224,6 +236,14 @@ export function PoleCalculator() {
       setResults,
       setShowResults
     );
+
+    if (errors.condition) {
+      setConditionErrors(getConditionErrors(condition));
+    }
+
+    if (errors.section) {
+      setSectionsErrors(getSectionsErrors(sections));
+    }
 
     if (!isValid) return;
 
@@ -234,7 +254,7 @@ export function PoleCalculator() {
 
   // FUNCTION: Full validation before navigating to the report page
   const handleMakeReport = () => {
-    const isValid = makeReport(
+    const { isValid, errors } = makeReport(
       results,
       showToast,
       handleIsCoverComplete,
@@ -242,6 +262,15 @@ export function PoleCalculator() {
       sections,
       handleIsSectionComplete
     );
+
+    if (errors.cover) setCoverErrors(getCoverErrors(cover));
+    else setCoverErrors({});
+
+    if (errors.condition) setConditionErrors(getConditionErrors(condition));
+    else setConditionErrors({});
+
+    if (errors.section) setSectionsErrors(getSectionsErrors(sections));
+    else setSectionsErrors({});
 
     if (!isValid) return;
 
@@ -336,6 +365,7 @@ export function PoleCalculator() {
             condition={condition}
             onUpdate={handleConditionUpdate}
             onNext={handleConditionNext}
+            errors={conditionErrors}
           />
         </div>
 
@@ -465,6 +495,7 @@ export function PoleCalculator() {
                     handleUpdateSection(activeTab, updates)
                   }
                   hideHeader={true}
+                  errors={sectionsErrors[activeTab] || {}}
                 />
 
                 {/* FOOTER: RESET + CALCULATE / NEXT */}
@@ -572,6 +603,7 @@ export function PoleCalculator() {
         cover={cover}
         onUpdateCover={handleCoverUpdate}
         onMakeReport={handleMakeReport}
+        coverErrors={coverErrors}
       />
 
       {/* Toast Modal */}
