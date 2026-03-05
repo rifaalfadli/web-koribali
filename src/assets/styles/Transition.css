@@ -18,10 +18,12 @@
   background: linear-gradient(to right, #0d3b66, #3399cc);
   backdrop-filter: blur(6px);
   transform-origin: center;
-  transition: transform 1s ease-in-out, opacity 1s ease-in-out;
+  transition:
+    transform 1s ease-in-out,
+    opacity 1s ease-in-out;
 }
 
-/* Initial state: tirai menutup */
+/* Initial state */
 .transition-Top {
   top: 0;
   transform: translateY(0);
@@ -32,7 +34,7 @@
   transform: translateY(0);
 }
 
-/* Active state: tirai terbuka */
+/* Active state */
 .page-Transition.active .transition-Top {
   transform: translateY(-100%);
   opacity: 0;

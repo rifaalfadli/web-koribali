@@ -4,16 +4,16 @@
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
+    "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
+  font-family:
+    source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
 }
 
 @keyframes slideIn {
@@ -44,40 +44,4 @@ code {
 
 .animate-fadeIn {
   animation: fadeIn 0.2s ease-out;
-}
-
-/* === PRINT ONLY report-a4 === */
-/* === PRINT ONLY report-a4 (FINAL FIX) === */
-@page {
-  size: A4;
-  margin: 0;
-}
-
-@media print {
-  html,
-  body {
-    width: 210mm;
-    height: 297mm;
-    /* margin: 0 !important;
-    padding: 0 !important; */
-    overflow: hidden;
-  }
-
-  body * {
-    visibility: hidden !important;
-  }
-
-  #report-a4,
-  #report-a4 * {
-    visibility: visible !important;
-  }
-
-  #report-a4 {
-    position: absolute;
-    left: 0;
-    top: 0;
-    margin: 0 auto;
-    padding: 0;
-    border: none;
-  }
 }

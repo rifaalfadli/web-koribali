@@ -21,79 +21,29 @@ export default function Login() {
     password: Yup.string().required("*Password is required"),
   });
 
-  // const handleLogin = async (values, { resetForm }) => {
-  //   try {
-  //     // const res = await fetch("http://localhost:5000/anggota");
-  //     // const users = await res.json();
-  //     const res = await fetch("/database.json");
-  //     const data = await res.json();
-  //     const users = data.anggota;
-
-  //     const foundUser = users.find(
-  //       (u) =>
-  //         u.email === values.email.trim() &&
-  //         u.password === values.password.trim()
-  //     );
-
-  //     if (foundUser) {
-  //       setMessageType("success");
-  //       setMessage("Login successful!");
-  //       Cookies.set("user", JSON.stringify({ id: foundUser.id }), {
-  //         expires: 1,
-  //       });
-  //       sessionStorage.setItem("showTransition", "true");
-
-  //       resetForm();
-
-  //       // Redirect setelah 2 detik agar user sempat lihat pesan
-  //       setTimeout(() => navigate("/"), 2000);
-  //     } else {
-  //       setMessageType("error");
-  //       setMessage("Email or password is incorrect!");
-  //     }
-  //   } catch (error) {
-  //     console.error("Login error:", error);
-  //     setMessageType("error");
-  //     setMessage("An error occurred during login.");
-  //   }
-  // };
-
   const handleLogin = async (values, { resetForm }) => {
     try {
-      // 1️⃣ Ambil data anggota dari localStorage
-      let users = JSON.parse(localStorage.getItem("anggota"));
+      const res = await fetch("http://localhost:5000/anggota");
+      const users = await res.json();
 
-      // 2️⃣ Kalau belum ada (first run), load dari database.json
-      if (!users) {
-        const res = await fetch("/database.json");
-        const data = await res.json();
-        users = data.anggota || [];
-
-        // simpan ke localStorage
-        localStorage.setItem("anggota", JSON.stringify(users));
-      }
-
-      // 3️⃣ Cari user
       const foundUser = users.find(
         (u) =>
           u.email === values.email.trim() &&
-          u.password === values.password.trim()
+          u.password === values.password.trim(),
       );
 
       if (foundUser) {
         setMessageType("success");
         setMessage("Login successful!");
-
-        // 4️⃣ Simpan user login
         Cookies.set("user", JSON.stringify({ id: foundUser.id }), {
           expires: 1,
         });
-
         sessionStorage.setItem("showTransition", "true");
 
         resetForm();
 
-        setTimeout(() => navigate("/"), 1500);
+        // Redirect setelah 2 detik
+        setTimeout(() => navigate("/"), 2000);
       } else {
         setMessageType("error");
         setMessage("Email or password is incorrect!");

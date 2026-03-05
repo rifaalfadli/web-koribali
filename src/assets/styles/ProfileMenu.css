@@ -14,7 +14,8 @@
   cursor: pointer;
   border: 2px solid transparent;
   object-fit: cover;
-  background: linear-gradient(white, white) padding-box,
+  background:
+    linear-gradient(white, white) padding-box,
     linear-gradient(to right, #0d3b66, #1e6091);
   transition: all 0.25s ease;
 }
@@ -42,7 +43,6 @@
   border: 1px solid #e5e5e5; /* garis halus untuk tepi */
 }
 
-/* segitiga kecil di atas popup */
 .profile-popup::before {
   content: "";
   position: absolute;

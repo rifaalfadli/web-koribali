@@ -12,26 +12,6 @@ export default function ProfileMenu() {
   const [username, setUsername] = useState("");
 
   // Ambil user berdasarkan ID di cookie
-  // useEffect(() => {
-  //   const fetchUser = async () => {
-  //     try {
-  //       const userCookie = Cookies.get("user");
-  //       if (!userCookie) return;
-
-  //       const { id } = JSON.parse(userCookie);
-  //       const res = await fetch(`http://localhost:5000/anggota/${id}`);
-  //       if (!res.ok) throw new Error("Failed to fetch user data");
-
-  //       const data = await res.json();
-  //       setUsername(data.fullname);
-  //     } catch (error) {
-  //       console.error("Error fetching user:", error);
-  //     }
-  //   };
-
-  //   fetchUser();
-  // }, []);
-
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -39,15 +19,11 @@ export default function ProfileMenu() {
         if (!userCookie) return;
 
         const { id } = JSON.parse(userCookie);
+        const res = await fetch(`http://localhost:5000/anggota/${id}`);
+        if (!res.ok) throw new Error("Failed to fetch user data");
 
-        // 🔥 Ambil dari localStorage
-        const users = JSON.parse(localStorage.getItem("anggota"));
-        if (!users) return;
-
-        const currentUser = users.find((u) => u.id === id);
-        if (!currentUser) return;
-
-        setUsername(currentUser.fullname);
+        const data = await res.json();
+        setUsername(data.fullname);
       } catch (error) {
         console.error("Error fetching user:", error);
       }

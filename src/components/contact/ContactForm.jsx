@@ -183,7 +183,6 @@ export const ContactForm = () => {
                   </div>
                 </motion.div>
 
-                {/* lanjut kode asli kamu tanpa diubah */}
                 <div className="form-row">
                   {/* Email Field */}
                   <div className="form-group">

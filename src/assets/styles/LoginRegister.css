@@ -131,10 +131,12 @@
 }
 
 .input-field {
-  transition: all 0.25s ease, box-shadow 0.25s ease;
+  transition:
+    all 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
-/* ===== READONLY STATE (tidak interaktif sama sekali) ===== */
+/* ===== READONLY STATE ===== */
 .input-field.readonly {
   background-color: transparent;
   border: none;
@@ -227,7 +229,9 @@ select:disabled {
   transform: translateY(-50%);
   cursor: pointer;
   color: #7a7a7a;
-  transition: color 0.2s ease, transform 0.1s ease;
+  transition:
+    color 0.2s ease,
+    transform 0.1s ease;
 }
 
 .eye-icon:hover {
@@ -329,7 +333,7 @@ select:disabled {
   opacity: 0;
   transform: translateY(10px);
   animation: textAppear 1s ease forwards;
-  animation-delay: 1s; /* muncul sedikit setelah form */
+  animation-delay: 1s;
 }
 
 @keyframes textAppear {

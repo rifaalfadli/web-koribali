@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
 import { createPortal } from "react-dom";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion"; // <-- ditambahkan
+import { motion } from "framer-motion";
 import PageTransition from "../components/shared/Transition";
 import Header from "../components/Header";
 import MainHero from "../components/MainHero";
@@ -20,7 +20,7 @@ export default function Beranda() {
     const shouldShow = sessionStorage.getItem("showTransition");
     if (shouldShow === "true") {
       setShowTransition(true);
-      sessionStorage.removeItem("showTransition"); // hapus supaya nggak muncul lagi
+      sessionStorage.removeItem("showTransition");
       const timer = setTimeout(() => setShowTransition(false), 1200);
       return () => clearTimeout(timer);
     }

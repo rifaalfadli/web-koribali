@@ -1,6 +1,6 @@
 import { Helmet } from "react-helmet";
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion"; //Tambahan motion
+import { motion } from "framer-motion";
 import Breadcrumb from "../components/Breadcrumb";
 import Hero from "../components/Hero";
 import Header from "../components/Header";
@@ -19,7 +19,6 @@ function DivisiTable({ id, title, data }) {
         {title}
       </motion.h2>
 
-      {/* Tambahkan animasi pada tabel */}
       <motion.table
         id={`data-divisi-${id}`}
         className="table-pegawai"
@@ -61,64 +60,31 @@ export default function StrukturPegawai() {
   const [anggota, setAnggota] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // // Fetch data anggota dari server
-  // useEffect(() => {
-  //   const fetchAnggota = async () => {
-  //     try {
-  //       const res = await fetch("http://localhost:5000/anggota");
-  //       if (!res.ok) throw new Error("Gagal ambil data anggota");
-
-  //       const data = await res.json();
-  //       // Pastikan data aman
-  //       const safeData = data.map(({ fullname, email, divisi }) => ({
-  //         fullname,
-  //         email,
-  //         divisi: divisi ?? "Tidak ada divisi",
-  //       }));
-
-  //       setAnggota(safeData);
-  //     } catch (err) {
-  //       console.error("Fetch error::", err);
-  //       setAnggota([]); // fallback
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   fetchAnggota();
-  // }, []);
-
+  // Fetch data anggota dari server
   useEffect(() => {
-    const loadAnggota = async () => {
+    const fetchAnggota = async () => {
       try {
-        // ambil data default (database.json)
-        const res = await fetch("/database.json");
-        const json = await res.json();
-        const defaultAnggota = json.anggota || [];
+        const res = await fetch("http://localhost:5000/anggota");
+        if (!res.ok) throw new Error("Gagal ambil data anggota");
 
-        // ambil data hasil register
-        // const localAnggota = JSON.parse(localStorage.getItem("anggota")) || [];
+        const data = await res.json();
+        // Pastikan data aman
+        const safeData = data.map(({ fullname, email, divisi }) => ({
+          fullname,
+          email,
+          divisi: divisi ?? "Tidak ada divisi",
+        }));
 
-        // gabungkan & sanitasi
-        // const merged = [...defaultAnggota, ...localAnggota].map(
-        const merged = [...defaultAnggota].map(
-          ({ fullname, email, divisi }) => ({
-            fullname,
-            email,
-            divisi: divisi ?? "Tidak ada divisi",
-          })
-        );
-
-        setAnggota(merged);
+        setAnggota(safeData);
       } catch (err) {
-        console.error("Load anggota error:", err);
-        setAnggota([]);
+        console.error("Fetch error::", err);
+        setAnggota([]); // fallback
       } finally {
         setLoading(false);
       }
     };
 
-    loadAnggota();
+    fetchAnggota();
   }, []);
 
   // Kelompokkan berdasarkan divisi

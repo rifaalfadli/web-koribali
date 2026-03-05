@@ -27,7 +27,7 @@ export default function GaleriSection() {
       const maxScroll = container.scrollWidth - container.clientWidth;
       const index = Math.round((scrollPos / maxScroll) * (images.length - 1));
       setScrollIndex(index);
-      setActiveIndex(index); // sync dot aktif juga
+      setActiveIndex(index);
     };
 
     container.addEventListener("scroll", handleScroll);
@@ -49,7 +49,6 @@ export default function GaleriSection() {
           Galeri Preview
         </motion.h2>
 
-        {/* Tombol kiri & kanan */}
         <button
           className={`scroll-btn left ${isAtStart ? "disabled" : ""}`}
           onClick={scrollLeft}
@@ -85,7 +84,6 @@ export default function GaleriSection() {
           ))}
         </div>
 
-        {/* Bulat indikator */}
         <motion.div
           className="indicator-dots"
           initial={{ opacity: 0, y: 20 }}

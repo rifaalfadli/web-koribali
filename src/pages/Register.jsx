@@ -35,71 +35,16 @@ function Register() {
       .matches(/\d/, "*Must contain number"),
   });
 
-  // const handleRegister = async (item, { resetForm }) => {
-  //   try {
-  //     const checkResponse = await fetch("http://localhost:5000/anggota");
-  //     const users = await checkResponse.json();
-
-  //     const isDuplicate = users.some(
-  //       (user) =>
-  //         user.fullname.toLowerCase() === item.fullname.toLowerCase() ||
-  //         user.email.toLowerCase() === item.email.toLowerCase() ||
-  //         user.phoneNumber.toLowerCase() === item.phoneNumber.toLowerCase()
-  //     );
-
-  //     if (isDuplicate) {
-  //       setMessageType("error");
-  //       setMessage("Name, email, or phone number already exists!");
-  //       return;
-  //     }
-
-  //     const response = await fetch("http://localhost:5000/anggota", {
-  //       method: "POST",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify({
-  //         fullname: item.fullname,
-  //         email: item.email,
-  //         phoneNumber: item.phoneNumber,
-  //         password: item.password,
-  //       }),
-  //     });
-
-  //     if (!response.ok) throw new Error("Failed to register");
-
-  //     const data = await response.json();
-  //     setMessageType("success");
-  //     console.log("Register success:", data);
-
-  //     setShowPopup(true);
-  //     resetForm();
-
-  //     setTimeout(() => {
-  //       navigate("/login");
-  //     }, 1500);
-  //   } catch (error) {
-  //     console.error("Register failed:", error);
-  //     setMessageType("error");
-  //     setMessage("An error occurred during registration.");
-  //   }
-  // };
   const handleRegister = async (item, { resetForm }) => {
     try {
-      // 1. Ambil user statis
-      const res = await fetch("/database.json");
-      const data = await res.json();
-      const staticUsers = data.anggota || [];
+      const checkResponse = await fetch("http://localhost:5000/anggota");
+      const users = await checkResponse.json();
 
-      // 2. Ambil user dari localStorage
-      const localUsers = JSON.parse(localStorage.getItem("anggota")) || [];
-
-      const allUsers = [...staticUsers, ...localUsers];
-
-      // 3. Cek duplikat
-      const isDuplicate = allUsers.some(
+      const isDuplicate = users.some(
         (user) =>
           user.fullname.toLowerCase() === item.fullname.toLowerCase() ||
           user.email.toLowerCase() === item.email.toLowerCase() ||
-          user.phoneNumber === item.phoneNumber
+          user.phoneNumber.toLowerCase() === item.phoneNumber.toLowerCase(),
       );
 
       if (isDuplicate) {
@@ -108,26 +53,29 @@ function Register() {
         return;
       }
 
-      // 4. Buat user baru
-      const newUser = {
-        id: `local-${Date.now()}`,
-        fullname: item.fullname,
-        email: item.email,
-        phoneNumber: item.phoneNumber,
-        password: item.password, // ⚠️ plaintext (OK untuk demo)
-        divisi: "Guest",
-      };
+      const response = await fetch("http://localhost:5000/anggota", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fullname: item.fullname,
+          email: item.email,
+          phoneNumber: item.phoneNumber,
+          password: item.password,
+        }),
+      });
 
-      // 5. Simpan ke localStorage
-      localUsers.push(newUser);
-      localStorage.setItem("anggota", JSON.stringify(localUsers));
+      if (!response.ok) throw new Error("Failed to register");
 
-      // 6. Success
+      const data = await response.json();
       setMessageType("success");
+      console.log("Register success:", data);
+
       setShowPopup(true);
       resetForm();
 
-      setTimeout(() => navigate("/login"), 1500);
+      setTimeout(() => {
+        navigate("/login");
+      }, 1500);
     } catch (error) {
       console.error("Register failed:", error);
       setMessageType("error");

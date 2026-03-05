@@ -5,7 +5,7 @@ import Cookies from "js-cookie";
 import { useEffect, useState } from "react";
 import clsx from "clsx";
 import { Helmet } from "react-helmet";
-import { motion } from "framer-motion"; // 🟢 DITAMBAHKAN
+import { motion } from "framer-motion";
 import Hero from "../components/Hero";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -62,21 +62,14 @@ export default function ProfilePage() {
 
       const { id } = JSON.parse(userCookie); // ambil id-nya
 
-      // // Ambil data user sesuai id dari server
-      // const res = await fetch(`http://localhost:5000/anggota/${id}`);
-      // if (!res.ok) throw new Error("Failed to fetch user data");
+      // Ambil data user sesuai id dari server
+      const res = await fetch(`http://localhost:5000/anggota/${id}`);
+      if (!res.ok) throw new Error("Failed to fetch user data");
 
-      // const data = await res.json();
-      // // Set data user ke state
-      // setUser(data);
-      // setOriginalUser(data);
-      const anggota = JSON.parse(localStorage.getItem("anggota")) || [];
-      const foundUser = anggota.find((u) => String(u.id) === String(id));
-
-      if (!foundUser) throw new Error("User not found");
-
-      setUser(foundUser);
-      setOriginalUser(foundUser);
+      const data = await res.json();
+      // Set data user ke state
+      setUser(data);
+      setOriginalUser(data);
     } catch (err) {
       console.error("Error fetching user:", err);
     }
@@ -102,7 +95,7 @@ export default function ProfilePage() {
     photo: Yup.mixed().test(
       "fileSize",
       "File too large (max 2MB)",
-      (value) => !value || (value && value.size <= 2000000)
+      (value) => !value || (value && value.size <= 2000000),
     ),
   });
 
@@ -121,80 +114,31 @@ export default function ProfilePage() {
   // =====================================================
   // Simpan perubahan user ke database
   // =====================================================
-  // const handleSave = async (updatedUser) => {
-  //   if (!updatedUser) return;
-
-  //   try {
-  //     const mergedUser = { ...user, ...updatedUser };
-
-  //     const res = await fetch(
-  //       `http://localhost:5000/anggota/${mergedUser.id}`,
-  //       {
-  //         method: "PUT",
-  //         headers: { "Content-Type": "application/json" },
-  //         body: JSON.stringify(mergedUser),
-  //       }
-  //     );
-
-  //     if (!res.ok) {
-  //       const errorText = await res.text();
-  //       console.error("Server error:", errorText);
-
-  //       setMessageType("error");
-  //       setMessage("Profile update failed: " + errorText);
-  //       return;
-  //     }
-
-  //     const savedUser = await res.json();
-  //     setUser(savedUser);
-  //     setOriginalUser(savedUser);
-  //     setPhotoState((prev) => ({ ...prev, preview: null }));
-
-  //     setMessageType("success");
-  //     setShowPopup(true);
-
-  //     setTimeout(() => {
-  //       setEditMode(false);
-  //       setShowPopup(false);
-  //     }, 1000);
-  //   } catch (err) {
-  //     console.error("Update failed:", err);
-  //     setMessageType("error");
-  //     setMessage("Error updating profile!");
-  //   }
-  // };
   const handleSave = async (updatedUser) => {
     if (!updatedUser) return;
 
     try {
-      // 1️⃣ Gabungkan data lama + data baru (LOGIKA ASLI TETAP)
       const mergedUser = { ...user, ...updatedUser };
 
-      // 2️⃣ Ambil "database" anggota dari localStorage
-      const anggota = JSON.parse(localStorage.getItem("anggota")) || [];
+      const res = await fetch(
+        `http://localhost:5000/anggota/${mergedUser.id}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(mergedUser),
+        },
+      );
 
-      // 3️⃣ Update user berdasarkan ID
-      let isUpdated = false;
-      const updatedAnggota = anggota.map((a) => {
-        if (String(a.id) === String(mergedUser.id)) {
-          isUpdated = true;
-          return mergedUser;
-        }
-        return a;
-      });
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error("Server error:", errorText);
 
-      // 4️⃣ Jika user tidak ditemukan
-      if (!isUpdated) {
-        throw new Error("User not found");
+        setMessageType("error");
+        setMessage("Profile update failed: " + errorText);
+        return;
       }
 
-      // 5️⃣ Simpan kembali ke "database"
-      localStorage.setItem("anggota", JSON.stringify(updatedAnggota));
-
-      // 6️⃣ MENIRU server success response
-      const savedUser = mergedUser;
-
-      // 7️⃣ Update state (SAMA PERSIS DENGAN LOGIKA LAMA)
+      const savedUser = await res.json();
       setUser(savedUser);
       setOriginalUser(savedUser);
       setPhotoState((prev) => ({ ...prev, preview: null }));
@@ -220,14 +164,13 @@ export default function ProfilePage() {
   // Tampilkan pesan loading jika data belum tersedia
   if (!user) return <div className="profile-Loading">Loading profile...</div>;
 
-  // Komponen input reusable
+  // Komponen input
   const InputField = ({
     name,
     label,
     readOnly,
     values,
     errors,
-    touched,
     originalUser,
   }) => {
     const originalValue = originalUser?.[name] ?? "";
@@ -257,7 +200,7 @@ export default function ProfilePage() {
                 className={clsx(
                   "input-field",
                   stateColor === "green" && "input-green",
-                  stateColor === "red" && "input-error"
+                  stateColor === "red" && "input-error",
                 )}
               />
 

@@ -1359,7 +1359,6 @@ textarea.form-control {
   z-index: 10;
 }
 
-/* Posisi lebih dekat ke gambar */
 .scroll-btn-galeri.left-galeri {
   left: 6%;
 }
@@ -1372,14 +1371,12 @@ textarea.form-control {
   filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.8));
 }
 
-/* Hover dengan efek glow lembut */
 .scroll-btn-galeri:not(.disabled):hover {
   transform: translateY(-50%) scale(1.12);
   background: linear-gradient(135deg, #3399cc, #0d3b66);
   box-shadow: 0 0 18px rgba(51, 153, 204, 0.8), 0 8px 25px rgba(0, 0, 0, 0.3);
 }
 
-/* Disabled state — lebih lembut */
 .scroll-btn-galeri.disabled {
   opacity: 0.45;
   background: linear-gradient(135deg, #7aaedb, #a6c8e3);
@@ -1388,7 +1385,6 @@ textarea.form-control {
   box-shadow: none;
 }
 
-/* Bulatan indikator di bawah */
 .indicator-dots-galeri {
   display: flex;
   justify-content: center;
@@ -1514,7 +1510,7 @@ textarea.form-control {
 .table-pegawai th:nth-child(3),
 .table-pegawai td:nth-child(3) {
   width: 50%; /* Kolom "Email" */
-  word-break: break-word; /* Supaya email panjang tetap rapi */
+  word-break: break-word; 
 }
 
 /* Header tabel */
@@ -1549,13 +1545,13 @@ textarea.form-control {
 
 .profile-Loading {
   display: flex;
-  justify-content: center; /* Tengah secara horizontal */
-  align-items: center; /* Tengah secara vertikal */
-  height: 100vh; /* Full tinggi layar */
-  font-size: 1.5rem; /* Ukuran teks besar */
+  justify-content: center; 
+  align-items: center; 
+  height: 100vh; 
+  font-size: 1.5rem; 
   font-weight: 500;
-  color: #374151; /* Abu-abu gelap */
-  background-color: #f9fafb; /* Latar belakang putih keabu */
+  color: #374151;
+  background-color: #f9fafb; 
   letter-spacing: 0.5px;
   animation: pulse 1.5s ease-in-out infinite;
 }
@@ -1639,7 +1635,7 @@ textarea.form-control {
 .section-text-page-proyek p {
   margin-top: 0.2rem;
   font-size: 0.9rem;
-  color: #6b7280; /* abu-abu */
+  color: #6b7280;
 }
 
 /* === Icon dan Warna === */
@@ -1702,16 +1698,16 @@ textarea.form-control {
   content: "";
   position: absolute;
   left: 0;
-  bottom: 0; /* garis di paling bawah card */
-  height: 4px; /* tebal garis */
-  width: 0; /* awalnya 0 */
+  bottom: 0;
+  height: 4px;
+  width: 0; 
   background: linear-gradient(90deg, #0d3b66, #3399cc);
   border-radius: 2px;
-  transition: width 0.7s cubic-bezier(0.4, 0, 0.2, 1); /* lebih smooth dan lambat */
+  transition: width 0.7s cubic-bezier(0.4, 0, 0.2, 1); 
 }
 
 .card-page-proyek:hover::after {
-  width: 100%; /* ketika hover, garis melebar 100% */
+  width: 100%; 
 }
 
 /* === Gambar proyek === */
@@ -1820,7 +1816,7 @@ textarea.form-control {
   transform: translateX(3px);
 }
 
-/* === Tombol lihat semua proyek dengan tema baru #3399cc === */
+/* === Tombol lihat semua proyek === */
 .see-more-page-proyek {
   display: inline-flex;
   align-items: center;
@@ -1850,7 +1846,6 @@ textarea.form-control {
   transform: translateX(3px);
 }
 
-/* SIDEBAR ELEGAN (KANAN ATAS) */
 .sidebar {
   display: none;
 }
@@ -1876,7 +1871,7 @@ textarea.form-control {
 
   .sidebar-title {
     margin-bottom: 20px;
-    color: #0d3b66; /* biru tua dari gradasi */
+    color: #0d3b66; 
     font-size: 16px;
     font-weight: 600;
   }
@@ -1907,7 +1902,7 @@ textarea.form-control {
   }
 
   .sidebar-btn:hover {
-    background: rgba(51, 153, 204, 0.1); /* hover lembut sesuai gradasi */
+    background: rgba(51, 153, 204, 0.1); 
     transform: translateX(4px);
   }
 

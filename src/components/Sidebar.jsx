@@ -7,7 +7,7 @@ import "../assets/styles/Responsive.css";
 export function Sidebar() {
   const [activeSection, setActiveSection] = useState("rendering");
 
-  // ✅ Gunakan useMemo agar projectLinks tidak berubah di setiap render
+  // Gunakan useMemo agar projectLinks tidak berubah di setiap render
   const projectLinks = useMemo(
     () => [
       {
@@ -25,8 +25,8 @@ export function Sidebar() {
       },
       { id: "vba", name: "Kalkulasi VBA", icon: Calculator, color: "#f97316" },
     ],
-    []
-  ); // <-- dependency kosong artinya hanya dibuat sekali
+    [],
+  );
 
   useEffect(() => {
     const handleScroll = () => {
@@ -44,7 +44,7 @@ export function Sidebar() {
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [projectLinks]); // ✅ tambahkan projectLinks di dependency
+  }, [projectLinks]);
 
   const scrollToSection = (id) => {
     const element = document.getElementById(id);

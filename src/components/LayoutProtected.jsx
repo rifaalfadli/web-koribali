@@ -3,7 +3,7 @@ import { Outlet } from "react-router-dom";
 const LayoutProtected = () => {
   return (
     <div className="layoutprivate">
-      {/* Semua halaman private (yang di dalam ProtectedRoute) akan muncul di sini */}
+      {/* Semua halaman private (yang di dalam ProtectedRoute) */}
       <Outlet />
     </div>
   );

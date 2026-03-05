@@ -1,0 +1,142 @@
+{
+  "anggota": [
+    {
+      "id": "ys1",
+      "fullname": "Bintarjo Agus Priyadi",
+      "email": "agus@gmail.com",
+      "phoneNumber": "089977665522",
+      "divisi": "YS",
+      "password": "1234Agus"
+    },
+    {
+      "id": "ys2",
+      "fullname": "M. Ramdan Purnama",
+      "email": "ramdan@gmail.com",
+      "phoneNumber": "089292834734",
+      "divisi": "YS",
+      "password": "1234Ramdan"
+    },
+    {
+      "id": "ys3",
+      "fullname": "Ajie Jodi Sumarno",
+      "email": "ajie@gmail.com",
+      "phoneNumber": "08997799912",
+      "divisi": "YS",
+      "password": "1234Ajie"
+    },
+    {
+      "id": "ys4",
+      "fullname": "Nawid Ahmad",
+      "email": "nawid@gmail.com",
+      "phoneNumber": "08976555551",
+      "divisi": "YS",
+      "password": "1234Nawid"
+    },
+    {
+      "id": "ys5",
+      "fullname": "Vannto",
+      "email": "vannto@gmail.com",
+      "phoneNumber": "08988888144",
+      "divisi": "YS",
+      "password": "1234Vannto"
+    },
+    {
+      "id": "dv1",
+      "fullname": "Amiril Mukminin",
+      "email": "amir@gmail.com",
+      "phoneNumber": "0894433333",
+      "divisi": "Development",
+      "password": "1234Amir"
+    },
+    {
+      "id": "dv2",
+      "fullname": "Muhammad Rifa Alfadli",
+      "email": "rifa@gmail.com",
+      "phoneNumber": "03389422228",
+      "divisi": "Development",
+      "password": "1234Rifa"
+    },
+    {
+      "id": "dv3",
+      "fullname": "Ni Nyoman Kayika Manuhita",
+      "email": "hita@gmail.com",
+      "phoneNumber": "0777777321",
+      "divisi": "Development",
+      "password": "1234Hita"
+    },
+    {
+      "id": "dv4",
+      "fullname": "Nurul Balqis Apriany",
+      "email": "balqis@gmail.com",
+      "phoneNumber": "089222222",
+      "divisi": "Development",
+      "password": "1234Balqis"
+    },
+    {
+      "id": "dv5",
+      "fullname": "Azzachra Caesyafitri",
+      "email": "zachra@gmail.com",
+      "phoneNumber": "08888888888",
+      "divisi": "Development",
+      "password": "1234Zachra"
+    },
+    {
+      "id": "yp1",
+      "fullname": "Ricki Harmon",
+      "email": "ricki@gmail.com",
+      "phoneNumber": "0833224455",
+      "divisi": "YP",
+      "password": "1234Ricki"
+    },
+    {
+      "id": "yp2",
+      "fullname": "Pijar Eko Saktiaji",
+      "email": "pijar@gmail.com",
+      "phoneNumber": "089292834734",
+      "divisi": "YP",
+      "password": "1234Pijar"
+    },
+    {
+      "id": "yp3",
+      "fullname": "Muhammad Fitra Romadhon",
+      "email": "fitra@gmail.com",
+      "phoneNumber": "087766221111",
+      "divisi": "YP",
+      "password": "1234Fitra"
+    },
+    {
+      "id": "yp4",
+      "fullname": "Cece Saepurrohman",
+      "email": "cece@gmail.com",
+      "phoneNumber": "08888888888",
+      "divisi": "YP",
+      "password": "1234Cece"
+    },
+    {
+      "id": "yp5",
+      "fullname": "Mediani Utami",
+      "email": "medi@gmail.com",
+      "phoneNumber": "08888888888",
+      "divisi": "YP",
+      "password": "1234Medi"
+    },
+    {
+      "id": "yp6",
+      "fullname": "Raden Nur Afrisya",
+      "email": "raden@gmail.com",
+      "phoneNumber": "08111999881",
+      "divisi": "YP",
+      "password": "1234Raden"
+    }
+  ],
+  "pesan": [
+    {
+      "id": "8185",
+      "name": "Ricki Harmon",
+      "email": "rifa@gmail.com",
+      "telephone": "0888997766",
+      "message": "aaa",
+      "timestamp": "Jumat, 7 November 2025 pukul 11.11.24"
+    }
+  ]
+}
