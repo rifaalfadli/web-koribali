@@ -13,10 +13,12 @@ import Breadcrumb from "../components/Breadcrumb";
 import "../assets/styles/ProfilePage.css";
 import "../assets/styles/Style.css";
 import "../assets/styles/Responsive.css";
+import { useUser } from "../hooks/useAuth";
 
 export default function ProfilePage() {
   // State utama yang menampung data user yang sedang login
-  const [user, setUser] = useState(null);
+  // const [user, setUser] = useState(null);
+  const {user, loading} = useUser()
   const [originalUser, setOriginalUser] = useState(null);
 
   // State untuk pesan sukses/error
@@ -54,31 +56,32 @@ export default function ProfilePage() {
   // =====================================================
   // Ambil data user yang sedang login dari Cookies
   // =====================================================
-  const fetchUser = async () => {
-    try {
-      // Ambil id dari cookies
-      const userCookie = Cookies.get("user");
-      if (!userCookie) return;
 
-      const { id } = JSON.parse(userCookie); // ambil id-nya
+  // const fetchUser = async () => {
+  //   try {
+  //     // Ambil id dari cookies
+  //     const userCookie = Cookies.get("user");
+  //     if (!userCookie) return;
 
-      // Ambil data user sesuai id dari server
-      const res = await fetch(`http://localhost:5000/anggota/${id}`);
-      if (!res.ok) throw new Error("Failed to fetch user data");
+  //     const { id } = JSON.parse(userCookie); // ambil id-nya
 
-      const data = await res.json();
-      // Set data user ke state
-      setUser(data);
-      setOriginalUser(data);
-    } catch (err) {
-      console.error("Error fetching user:", err);
-    }
-  };
+  //     // Ambil data user sesuai id dari server
+  //     const res = await fetch(`http://localhost:5000/anggota/${id}`);
+  //     if (!res.ok) throw new Error("Failed to fetch user data");
 
-  // Jalankan `fetchUser` hanya saat komponen pertama kali dirender
-  useEffect(() => {
-    fetchUser();
-  }, []);
+  //     const data = await res.json();
+  //     // Set data user ke state
+  //     setUser(data);
+  //     setOriginalUser(data);
+  //   } catch (err) {
+  //     console.error("Error fetching user:", err);
+  //   }
+  // };
+
+  // // Jalankan `fetchUser` hanya saat komponen pertama kali dirender
+  // useEffect(() => {
+  //   fetchUser();
+  // }, []);
 
   // Validation schema using Yup
   const ProfileSchema = Yup.object().shape({
@@ -115,46 +118,46 @@ export default function ProfilePage() {
   // Simpan perubahan user ke database
   // =====================================================
   const handleSave = async (updatedUser) => {
-    if (!updatedUser) return;
+    // if (!updatedUser) return;
 
-    try {
-      const mergedUser = { ...user, ...updatedUser };
+    // try {
+    //   const mergedUser = { ...user, ...updatedUser };
 
-      const res = await fetch(
-        `http://localhost:5000/anggota/${mergedUser.id}`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(mergedUser),
-        },
-      );
+    //   const res = await fetch(
+    //     `http://localhost:5000/anggota/${mergedUser.id}`,
+    //     {
+    //       method: "PUT",
+    //       headers: { "Content-Type": "application/json" },
+    //       body: JSON.stringify(mergedUser),
+    //     },
+    //   );
 
-      if (!res.ok) {
-        const errorText = await res.text();
-        console.error("Server error:", errorText);
+    //   if (!res.ok) {
+    //     const errorText = await res.text();
+    //     console.error("Server error:", errorText);
 
-        setMessageType("error");
-        setMessage("Profile update failed: " + errorText);
-        return;
-      }
+    //     setMessageType("error");
+    //     setMessage("Profile update failed: " + errorText);
+    //     return;
+    //   }
 
-      const savedUser = await res.json();
-      setUser(savedUser);
-      setOriginalUser(savedUser);
-      setPhotoState((prev) => ({ ...prev, preview: null }));
+    //   const savedUser = await res.json();
+    //   setUser(savedUser);
+    //   setOriginalUser(savedUser);
+    //   setPhotoState((prev) => ({ ...prev, preview: null }));
 
-      setMessageType("success");
-      setShowPopup(true);
+    //   setMessageType("success");
+    //   setShowPopup(true);
 
-      setTimeout(() => {
-        setEditMode(false);
-        setShowPopup(false);
-      }, 1000);
-    } catch (err) {
-      console.error("Update failed:", err);
-      setMessageType("error");
-      setMessage("Error updating profile!");
-    }
+    //   setTimeout(() => {
+    //     setEditMode(false);
+    //     setShowPopup(false);
+    //   }, 1000);
+    // } catch (err) {
+    //   console.error("Update failed:", err);
+    //   setMessageType("error");
+    //   setMessage("Error updating profile!");
+    // }
   };
 
   const closeMessage = () => {
@@ -376,7 +379,7 @@ export default function ProfilePage() {
                             className={clsx("btn-cancel", "button-profile")}
                             onClick={(e) => {
                               e.preventDefault();
-                              setUser(originalUser);
+                              // setUser(originalUser);
                               setEditMode(false);
                               setPhotoState((prev) => ({
                                 ...prev,

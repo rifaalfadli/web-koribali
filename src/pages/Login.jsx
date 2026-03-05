@@ -23,31 +23,57 @@ export default function Login() {
 
   const handleLogin = async (values, { resetForm }) => {
     try {
-      const res = await fetch("http://localhost:5000/anggota");
-      const users = await res.json();
+      const res = await fetch("http://localhost:5000/auth/login",{
+        method: 'POST',
+        headers: {
+        "Content-Type": "application/json", 
+      },
+      body: JSON.stringify(values)
+      });
 
-      const foundUser = users.find(
-        (u) =>
-          u.email === values.email.trim() &&
-          u.password === values.password.trim(),
-      );
+      const data = await res.json();
 
-      if (foundUser) {
-        setMessageType("success");
-        setMessage("Login successful!");
-        Cookies.set("user", JSON.stringify({ id: foundUser.id }), {
-          expires: 1,
-        });
-        sessionStorage.setItem("showTransition", "true");
+      // console.log(data)
 
-        resetForm();
+      if (res.ok){
+        setMessageType()
+        setMessage('Login Successfully!')
+        
+        Cookies.set('access_token', data.access_token, { expires: 1 });
+        // Cookies.set('access_token', 'tokenAsal', { expires: 1 });
 
-        // Redirect setelah 2 detik
-        setTimeout(() => navigate("/"), 2000);
+
+        sessionStorage.setItem('showTransition', 'true')
+
+        resetForm()
+        navigate('/')
       } else {
-        setMessageType("error");
-        setMessage("Email or password is incorrect!");
+        setMessageType('error')
+        setMessage(data.message)
       }
+
+      // const foundUser = users.find(
+      //   (u) =>
+      //     u.email === values.email.trim() &&
+      //     u.password === values.password.trim(),
+      // );
+
+      // if (foundUser) {
+      //   setMessageType("success");
+      //   setMessage("Login successful!");
+      //   Cookies.set("user", JSON.stringify({ id: foundUser.id }), {
+      //     expires: 1,
+      //   });
+      //   sessionStorage.setItem("showTransition", "true");
+
+      //   resetForm();
+
+      //   // Redirect setelah 2 detik
+      //   setTimeout(() => navigate("/"), 2000);
+      // } else {
+      //   setMessageType("error");
+      //   setMessage("Email or password is incorrect!");
+      // }
     } catch (error) {
       console.error("Login error:", error);
       setMessageType("error");

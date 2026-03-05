@@ -9,7 +9,7 @@ const Logout = () => {
   const [showModal, setShowModal] = useState(false);
 
   function handleLogout() {
-    Cookies.remove("user"); // hapus cookie
+    Cookies.remove("access_token"); // hapus cookie
     navigate("/login"); // redirect ke login
   }
 

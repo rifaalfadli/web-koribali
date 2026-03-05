@@ -4,6 +4,8 @@ import * as Yup from "yup";
 import { useState } from "react";
 import { Eye, EyeOff, X, CheckCircle, AlertCircle } from "lucide-react";
 import { Helmet } from "react-helmet";
+import Cookies from "js-cookie";
+
 import "../assets/styles/Style.css";
 import "../assets/styles/Responsive.css";
 import "../assets/styles/LoginRegister.css";
@@ -37,45 +39,57 @@ function Register() {
 
   const handleRegister = async (item, { resetForm }) => {
     try {
-      const checkResponse = await fetch("http://localhost:5000/anggota");
-      const users = await checkResponse.json();
+      // const checkResponse = await fetch("http://localhost:5000/anggota");
+      // const users = await checkResponse.json();
 
-      const isDuplicate = users.some(
-        (user) =>
-          user.fullname.toLowerCase() === item.fullname.toLowerCase() ||
-          user.email.toLowerCase() === item.email.toLowerCase() ||
-          user.phoneNumber.toLowerCase() === item.phoneNumber.toLowerCase(),
-      );
+      // const isDuplicate = users.some(
+      //   (user) =>
+      //     user.fullname.toLowerCase() === item.fullname.toLowerCase() ||
+      //     user.email.toLowerCase() === item.email.toLowerCase() ||
+      //     user.phoneNumber.toLowerCase() === item.phoneNumber.toLowerCase(),
+      // );
 
-      if (isDuplicate) {
-        setMessageType("error");
-        setMessage("Name, email, or phone number already exists!");
-        return;
-      }
+      // if (isDuplicate) {
+      //   setMessageType("error");
+      //   setMessage("Name, email, or phone number already exists!");
+      //   return;
+      // }
 
-      const response = await fetch("http://localhost:5000/anggota", {
+      const response = await fetch("http://localhost:5000/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          fullname: item.fullname,
+          username: item.fullname,
           email: item.email,
-          phoneNumber: item.phoneNumber,
-          password: item.password,
+          number_phone: item.phoneNumber,
+          password: item.password
         }),
       });
-
-      if (!response.ok) throw new Error("Failed to register");
-
       const data = await response.json();
+
+     
+      if (!response.ok) {
+        setMessageType('error')
+        setMessage(data.message || "Registration feiled")
+        return;
+      };
+
+      // if (!response.ok) throw new Error("Failed to register");
+
       setMessageType("success");
       console.log("Register success:", data);
+      
+      if(data.access_token){
+        Cookies.set('access_token', data.access_token, {expires:1})
+      }
 
       setShowPopup(true);
       resetForm();
 
-      setTimeout(() => {
-        navigate("/login");
-      }, 1500);
+      navigate('/')
+      // setTimeout(() => {
+      //   navigate("/login");
+      // }, 1500);
     } catch (error) {
       console.error("Register failed:", error);
       setMessageType("error");
