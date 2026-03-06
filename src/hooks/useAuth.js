@@ -9,7 +9,7 @@ export const useUser = () =>{
     const getUser = async () => {
         try{
             // setLoading(true)
-            const response = await fetchAPI('/auth/me')
+            const response = await fetchAPI('/user/profile')
 
             if (!response.ok) throw new Error("Gagal mengambil data user")
             

@@ -16,7 +16,8 @@ import "../assets/styles/Responsive.css";
 import { useUser } from "../hooks/useAuth";
 
 export default function ProfilePage() {
-
+  // State utama yang menampung data user yang sedang login
+  // const [user, setUser] = useState(null);
   const {user, loading} = useUser()
   const [originalUser, setOriginalUser] = useState(null);
 
@@ -52,9 +53,39 @@ export default function ProfilePage() {
   const toggleFullImage = () =>
     setPhotoState((prev) => ({ ...prev, showFull: !prev.showFull }));
 
+  // =====================================================
+  // Ambil data user yang sedang login dari Cookies
+  // =====================================================
+
+  // const fetchUser = async () => {
+  //   try {
+  //     // Ambil id dari cookies
+  //     const userCookie = Cookies.get("user");
+  //     if (!userCookie) return;
+
+  //     const { id } = JSON.parse(userCookie); // ambil id-nya
+
+  //     // Ambil data user sesuai id dari server
+  //     const res = await fetch(`http://localhost:5000/anggota/${id}`);
+  //     if (!res.ok) throw new Error("Failed to fetch user data");
+
+  //     const data = await res.json();
+  //     // Set data user ke state
+  //     setUser(data);
+  //     setOriginalUser(data);
+  //   } catch (err) {
+  //     console.error("Error fetching user:", err);
+  //   }
+  // };
+
+  // // Jalankan `fetchUser` hanya saat komponen pertama kali dirender
+  // useEffect(() => {
+  //   fetchUser();
+  // }, []);
+
   // Validation schema using Yup
   const ProfileSchema = Yup.object().shape({
-    nama_lengkap: Yup.string()
+    fullname: Yup.string()
       .min(2, "Too Short!")
       .max(50, "Too Long!")
       .required("Name is required"),
@@ -71,6 +102,9 @@ export default function ProfilePage() {
     ),
   });
 
+  // =====================================================
+  // Handle saat user memilih foto baru (preview sebelum disimpan)
+  // =====================================================
   const handlePhotoChange = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -80,8 +114,50 @@ export default function ProfilePage() {
     reader.readAsDataURL(file);
   };
 
+  // =====================================================
+  // Simpan perubahan user ke database
+  // =====================================================
   const handleSave = async (updatedUser) => {
-    
+    // if (!updatedUser) return;
+
+    // try {
+    //   const mergedUser = { ...user, ...updatedUser };
+
+    //   const res = await fetch(
+    //     `http://localhost:5000/anggota/${mergedUser.id}`,
+    //     {
+    //       method: "PUT",
+    //       headers: { "Content-Type": "application/json" },
+    //       body: JSON.stringify(mergedUser),
+    //     },
+    //   );
+
+    //   if (!res.ok) {
+    //     const errorText = await res.text();
+    //     console.error("Server error:", errorText);
+
+    //     setMessageType("error");
+    //     setMessage("Profile update failed: " + errorText);
+    //     return;
+    //   }
+
+    //   const savedUser = await res.json();
+    //   setUser(savedUser);
+    //   setOriginalUser(savedUser);
+    //   setPhotoState((prev) => ({ ...prev, preview: null }));
+
+    //   setMessageType("success");
+    //   setShowPopup(true);
+
+    //   setTimeout(() => {
+    //     setEditMode(false);
+    //     setShowPopup(false);
+    //   }, 1000);
+    // } catch (err) {
+    //   console.error("Update failed:", err);
+    //   setMessageType("error");
+    //   setMessage("Error updating profile!");
+    // }
   };
 
   const closeMessage = () => {
@@ -124,7 +200,6 @@ export default function ProfilePage() {
                 id={name}
                 readOnly={readOnly}
                 onFocus={handleFocus}
-                placeholder={name}
                 className={clsx(
                   "input-field",
                   stateColor === "green" && "input-green",
@@ -253,8 +328,7 @@ export default function ProfilePage() {
               enableReinitialize
               initialValues={{
                 id: user.id,
-                username: user.username,
-                nama_lengkap: user.nama_lengkap || "",
+                fullname: user.fullname || "",
                 email: user.email || "",
                 phoneNumber: user.phoneNumber || "",
               }}
@@ -265,17 +339,8 @@ export default function ProfilePage() {
                 return (
                   <Form className="profile-info">
                     <InputField
-                      name="username"
-                      label="Username:"
-                      readOnly={!editMode}
-                      values={values}
-                      errors={errors}
-                      touched={touched}
-                      originalUser={originalUser}
-                    />
-                    <InputField
-                      name="nama_lengkap"
-                      label="Nama Lengkap:"
+                      name="fullname"
+                      label="Name:"
                       readOnly={!editMode}
                       values={values}
                       errors={errors}
