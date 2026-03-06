@@ -16,10 +16,9 @@ import "../assets/styles/Responsive.css";
 import { useUser } from "../hooks/useAuth";
 
 export default function ProfilePage() {
-
-  const {user, loading} = useUser()
+  const { user, loading, refreshUser } = useUser();
   const [originalUser, setOriginalUser] = useState(null);
-
+  console.log("ini ori user: ", originalUser);
   // State untuk pesan sukses/error
   const [message, setMessage] = useState(null);
   const [messageType, setMessageType] = useState("");
@@ -54,16 +53,18 @@ export default function ProfilePage() {
 
   // Validation schema using Yup
   const ProfileSchema = Yup.object().shape({
-    nama_lengkap: Yup.string()
-      .min(2, "Too Short!")
-      .max(50, "Too Long!")
-      .required("Name is required"),
+    username: Yup.string(),
+    full_name: Yup.string().min(2, "Too Short!").required("Name is required"),
     email: Yup.string().email("Invalid Email").required("Email is required"),
-    phoneNumber: Yup.string()
+    number_phone: Yup.string()
       .matches(/^[0-9]+$/, "Phone number must contain only digits")
       .min(10, "Phone number must be at least 10 digits")
       .max(15, "Phone number can't be longer than 15 digits")
       .required("Phone Number is required"),
+    address: Yup.string().required("Address is required"),
+    employee_id: Yup.string(),
+    division: Yup.string(),
+    joined_date: Yup.string(),
     photo: Yup.mixed().test(
       "fileSize",
       "File too large (max 2MB)",
@@ -81,7 +82,47 @@ export default function ProfilePage() {
   };
 
   const handleSave = async (updatedUser) => {
-    
+    if (!updatedUser) return;
+    try {
+      const token = Cookies.get("access_token");
+      console.log(token, updatedUser);
+
+      const response = await fetch("http://localhost:5000/user/profile", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(updatedUser),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Update failed");
+      }
+
+      if (refreshUser) await refreshUser();
+
+      console.log("Profile updated:", data);
+      setMessageType();
+      setMessage(data.message);
+
+      setOriginalUser(updatedUser);
+
+      // setUser((prev) => ({
+      //   ...prev,
+      //   profile: {
+      //     ...prev.profile,
+      //     full_name: values.full_name,
+      //     address: values.address
+      //   }
+      // }));
+
+      setEditMode(false);
+    } catch (error) {
+      console.error("Update profile error:", error);
+    }
   };
 
   const closeMessage = () => {
@@ -99,14 +140,17 @@ export default function ProfilePage() {
     values,
     errors,
     originalUser,
+    touched,
   }) => {
-    const originalValue = originalUser?.[name] ?? "";
-    const currentValue = values?.[name] ?? "";
+    const originalValue = String(originalUser?.[name] ?? "");
+    const currentValue = String(values?.[name] ?? "");
+    console.log(currentValue, originalValue);
     const isChanged = currentValue !== originalValue;
 
     let stateColor = "null";
-    if (isChanged && errors[name]) stateColor = "red";
-    else if (isChanged && !errors[name]) stateColor = "green";
+    if (!readOnly && isChanged) {
+      stateColor = errors[name] ? "red" : "green";
+    }
 
     return (
       <motion.div
@@ -118,13 +162,13 @@ export default function ProfilePage() {
         <Field name={name}>
           {({ field }) => (
             <div className={`form-group ${errors[name] ? "shake" : ""}`}>
-              <label>{label}</label>
+              <label>{label}:</label>
               <input
                 {...field}
                 id={name}
                 readOnly={readOnly}
                 onFocus={handleFocus}
-                placeholder={name}
+                placeholder={label}
                 className={clsx(
                   "input-field",
                   stateColor === "green" && "input-green",
@@ -133,14 +177,13 @@ export default function ProfilePage() {
               />
 
               <div className="error-container">
-                {errors[name] && (
+                {!readOnly && errors[name] && (
                   <div className="error-text">
                     <AlertCircle size={14} strokeWidth={2.5} />
                     {errors[name]}
                   </div>
                 )}
-
-                {!errors[name] && isChanged && (
+                {!readOnly && !errors[name] && isChanged && (
                   <div className="success-container active">
                     <div className="success-text">
                       <CheckCircle size={14} strokeWidth={2.5} />
@@ -254,19 +297,23 @@ export default function ProfilePage() {
               initialValues={{
                 id: user.id,
                 username: user.username,
-                nama_lengkap: user.nama_lengkap || "",
+                full_name: user.profile?.full_name || "",
                 email: user.email || "",
-                phoneNumber: user.phoneNumber || "",
+                number_phone: user.number_phone || "",
+                address: user.profile?.address || "",
+                division: user.employee_detail.division || "",
+                joined_date: user.employee_detail.joined_date || "",
+                employee_id: user.employee_detail.employee_id || "",
               }}
               validationSchema={ProfileSchema}
-              onSubmit={(values) => handleSave(values)}
+              onSubmit={handleSave}
             >
               {({ values, errors, touched, isValid, dirty, resetForm }) => {
                 return (
                   <Form className="profile-info">
                     <InputField
                       name="username"
-                      label="Username:"
+                      label="Username"
                       readOnly={!editMode}
                       values={values}
                       errors={errors}
@@ -274,8 +321,8 @@ export default function ProfilePage() {
                       originalUser={originalUser}
                     />
                     <InputField
-                      name="nama_lengkap"
-                      label="Nama Lengkap:"
+                      name="full_name"
+                      label="Nama Lengkap"
                       readOnly={!editMode}
                       values={values}
                       errors={errors}
@@ -284,7 +331,7 @@ export default function ProfilePage() {
                     />
                     <InputField
                       name="email"
-                      label="Email:"
+                      label="Email"
                       readOnly={!editMode}
                       values={values}
                       errors={errors}
@@ -292,15 +339,54 @@ export default function ProfilePage() {
                       originalUser={originalUser}
                     />
                     <InputField
-                      name="phoneNumber"
-                      label="Phone Number:"
+                      name="number_phone"
+                      label="Phone Number"
                       readOnly={!editMode}
                       values={values}
                       errors={errors}
                       touched={touched}
                       originalUser={originalUser}
                     />
-
+                    <InputField
+                      name="address"
+                      label="Alamat"
+                      readOnly={!editMode}
+                      values={values}
+                      errors={errors}
+                      touched={touched}
+                      originalUser={originalUser}
+                    />
+                    {user.role === "member" && (
+                      <>
+                        <InputField
+                          name="division"
+                          label="Divisi"
+                          readOnly={editMode}
+                          values={values}
+                          errors={errors}
+                          touched={touched}
+                          originalUser={originalUser}
+                        />
+                        <InputField
+                          name="employee_id"
+                          label="ID Karyawan"
+                          readOnly={editMode}
+                          values={values}
+                          errors={errors}
+                          touched={touched}
+                          originalUser={originalUser}
+                        />
+                        <InputField
+                          name="joined_date"
+                          label="Tanggal Bergabung"
+                          readOnly={editMode}
+                          values={values}
+                          errors={errors}
+                          touched={touched}
+                          originalUser={originalUser}
+                        />
+                      </>
+                    )}
                     <motion.div
                       className="profile-buttons"
                       initial={{ opacity: 0, y: 20 }}
@@ -329,6 +415,8 @@ export default function ProfilePage() {
                             type="submit"
                             className={clsx("btn-save", "button-profile")}
                             disabled={!isValid || !dirty}
+                            // disabled={false}
+                            onClick={() => console.log("clicked")}
                           >
                             Save
                           </button>
@@ -338,7 +426,21 @@ export default function ProfilePage() {
                           type="button"
                           className={clsx("btn-edit", "button-profile")}
                           onClick={() => {
-                            setOriginalUser(user);
+                            const flatUser = {
+                              id: user.id,
+                              username: user.username || "",
+                              full_name: user.profile?.full_name || "",
+                              email: user.email || "",
+                              number_phone: user.number_phone || "",
+                              address: user.profile?.address || "",
+                              division: user.employee_detail.division || "",
+                              joined_date:
+                                user.employee_detail.joined_date || "",
+                              employee_id:
+                                user.employee_detail.employee_id || "",
+                            };
+
+                            setOriginalUser(flatUser);
                             setEditMode(true);
                           }}
                         >
