@@ -17,6 +17,7 @@ import { useUser } from "../hooks/useAuth";
 
 export default function ProfilePage() {
   const { user, loading, refreshUser } = useUser();
+  console.log("ini user", user);
   const [originalUser, setOriginalUser] = useState(null);
   console.log("ini ori user: ", originalUser);
   // State untuk pesan sukses/error
@@ -64,7 +65,7 @@ export default function ProfilePage() {
     address: Yup.string().required("Address is required"),
     employee_id: Yup.string(),
     division: Yup.string(),
-    joined_date: Yup.string(),
+    joined_date: Yup.date(),
     photo: Yup.mixed().test(
       "fileSize",
       "File too large (max 2MB)",
@@ -102,11 +103,15 @@ export default function ProfilePage() {
         throw new Error(data.message || "Update failed");
       }
 
+      setShowPopup(true);
+      setTimeout(() => {
+        setEditMode(false);
+        setShowPopup(false);
+      }, 1000);
+
       if (refreshUser) await refreshUser();
 
       console.log("Profile updated:", data);
-      setMessageType();
-      setMessage(data.message);
 
       setOriginalUser(updatedUser);
 
@@ -118,8 +123,6 @@ export default function ProfilePage() {
       //     address: values.address
       //   }
       // }));
-
-      setEditMode(false);
     } catch (error) {
       console.error("Update profile error:", error);
     }
@@ -301,9 +304,9 @@ export default function ProfilePage() {
                 email: user.email || "",
                 number_phone: user.number_phone || "",
                 address: user.profile?.address || "",
-                division: user.employee_detail.division || "",
-                joined_date: user.employee_detail.joined_date || "",
-                employee_id: user.employee_detail.employee_id || "",
+                division: user.employee_detail?.division || "",
+                joined_date: user.employee_detail?.joined_date || "",
+                employee_id: user.employee_detail?.employee_id || "",
               }}
               validationSchema={ProfileSchema}
               onSubmit={handleSave}
@@ -433,11 +436,11 @@ export default function ProfilePage() {
                               email: user.email || "",
                               number_phone: user.number_phone || "",
                               address: user.profile?.address || "",
-                              division: user.employee_detail.division || "",
+                              division: user.employee_detail?.division || "",
                               joined_date:
-                                user.employee_detail.joined_date || "",
+                                user.employee_detail?.joined_date || "",
                               employee_id:
-                                user.employee_detail.employee_id || "",
+                                user.employee_detail?.employee_id || "",
                             };
 
                             setOriginalUser(flatUser);

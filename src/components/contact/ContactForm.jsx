@@ -17,7 +17,7 @@ export const ContactForm = () => {
   const initialValues = {
     name: "",
     email: "",
-    telephone: "",
+    number_phone: "",
     message: "",
   };
 
@@ -26,7 +26,7 @@ export const ContactForm = () => {
     email: Yup.string()
       .email("*Email tidak valid")
       .required("*Email wajib diisi"),
-    telephone: Yup.number()
+    number_phone: Yup.number()
       .typeError("*Nomor telepon hanya boleh berisi angka")
       .required("*Nomor telepon wajib diisi"),
     message: Yup.string()
@@ -36,20 +36,22 @@ export const ContactForm = () => {
 
   const handleSubmit = async (values, { resetForm }) => {
     try {
-      const now = new Date();
-      const timestamp = now.toLocaleString("id-ID", {
-        weekday: "long",
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-      });
+      // const now = new Date();
+      // const timestamp = now.toLocaleString("id-ID", {
+      //   weekday: "long",
+      //   year: "numeric",
+      //   month: "long",
+      //   day: "numeric",
+      //   hour: "2-digit",
+      //   minute: "2-digit",
+      //   second: "2-digit",
+      // });
 
-      const payload = { ...values, timestamp };
+      // const payload = { ...values, timestamp };
+      const payload = { ...values };
 
-      const response = await fetch("http://localhost:5000/pesan", {
+      console.log("payload : ", payload);
+      const response = await fetch("http://localhost:5000/message", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -214,10 +216,10 @@ export const ContactForm = () => {
                     </Field>
                   </div>
 
-                  {/* Telephone Field */}
+                  {/* telephone Field */}
                   <div className="form-group">
-                    <label htmlFor="telephone">No Telepon:</label>
-                    <Field name="telephone">
+                    <label htmlFor="number_phone">No Telepon:</label>
+                    <Field name="number_phone">
                       {({ field, meta }) => (
                         <div
                           className={`form-group ${
@@ -226,7 +228,7 @@ export const ContactForm = () => {
                         >
                           <input
                             {...field}
-                            id="telephone"
+                            id="number_phone"
                             placeholder="Masukkan Nomor Telepon Anda"
                             className={`form-control ${
                               meta.touched && meta.error ? "input-error" : ""
@@ -234,7 +236,7 @@ export const ContactForm = () => {
                           />
                           <div className="error-container">
                             <ErrorMessage
-                              name="telephone"
+                              name="number_phone"
                               component="div"
                               className="error-text"
                             />

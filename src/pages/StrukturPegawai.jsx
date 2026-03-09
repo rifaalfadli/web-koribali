@@ -7,6 +7,7 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import "../assets/styles/Style.css";
 import "../assets/styles/Responsive.css";
+import { useAllUsers } from "../hooks/useAllUsers";
 
 function DivisiTable({ id, title, data }) {
   return (
@@ -39,7 +40,7 @@ function DivisiTable({ id, title, data }) {
             data.map((user, index) => (
               <tr key={user.id}>
                 <td style={{ textAlign: "center" }}>{index + 1}</td>
-                <td>{user.fullname}</td>
+                <td>{user.profile?.full_name}</td>
                 <td>{user.email}</td>
               </tr>
             ))
@@ -57,40 +58,43 @@ function DivisiTable({ id, title, data }) {
 }
 
 export default function StrukturPegawai() {
-  const [anggota, setAnggota] = useState([]);
-  const [loading, setLoading] = useState(true);
+  // const [anggota, setAnggota] = useState([]);
+  // const [loading, setLoading] = useState(true);
 
   // Fetch data anggota dari server
-  useEffect(() => {
-    const fetchAnggota = async () => {
-      try {
-        const res = await fetch("http://localhost:5000/anggota");
-        if (!res.ok) throw new Error("Gagal ambil data anggota");
+  // useEffect(() => {
+  //   const fetchAnggota = async () => {
+  //     try {
+  //       const res = await fetch("http://localhost:5000/anggota");
+  //       if (!res.ok) throw new Error("Gagal ambil data anggota");
 
-        const data = await res.json();
-        // Pastikan data aman
-        const safeData = data.map(({ fullname, email, divisi }) => ({
-          fullname,
-          email,
-          divisi: divisi ?? "Tidak ada divisi",
-        }));
+  //       const data = await res.json();
+  //       // Pastikan data aman
+  //       const safeData = data.map(({ fullname, email, divisi }) => ({
+  //         fullname,
+  //         email,
+  //         divisi: divisi ?? "Tidak ada divisi",
+  //       }));
 
-        setAnggota(safeData);
-      } catch (err) {
-        console.error("Fetch error::", err);
-        setAnggota([]); // fallback
-      } finally {
-        setLoading(false);
-      }
-    };
+  //       setAnggota(safeData);
+  //     } catch (err) {
+  //       console.error("Fetch error::", err);
+  //       setAnggota([]); // fallback
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
 
-    fetchAnggota();
-  }, []);
+  //   fetchAnggota();
+  // }, []);
+
+  const { users, loading, refreshUser } = useAllUsers();
 
   // Kelompokkan berdasarkan divisi
-  const ys = anggota.filter((a) => a.divisi === "YS");
-  const yp = anggota.filter((a) => a.divisi === "YP");
-  const dev = anggota.filter((a) => a.divisi === "Development");
+  const ys = users.filter((a) => a.employee_detail?.division == "ys") || [];
+  const yp = users?.filter((a) => a.employee_detail?.division == "yp") || [];
+  const dev = users.filter((a) => a.employee_detail?.division == "dev") || [];
+  console.log("ini user:", yp);
 
   if (loading) return <div className="profile-Loading">Loading data...</div>;
 
