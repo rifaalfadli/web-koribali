@@ -19,6 +19,12 @@ function App() {
       <Routes>
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
+        <Route index element={<Beranda />} />
+        <Route path="struktur" element={<StrukturPegawai />} />
+        <Route path="proyek" element={<Proyek />} />
+        <Route path="galeri" element={<Galeri />} />
+        <Route path="kontak" element={<Kontak />} />
+        <Route path="*" element={<NotFoundPage />} />
 
         {/* Protected Route */}
         <Route
@@ -29,13 +35,7 @@ function App() {
             </ProtectedRoute>
           }
         >
-          <Route index element={<Beranda />} />
-          <Route path="struktur" element={<StrukturPegawai />} />
-          <Route path="proyek" element={<Proyek />} />
-          <Route path="galeri" element={<Galeri />} />
-          <Route path="kontak" element={<Kontak />} />
           <Route path="profile" element={<ProfilePage />} />
-          <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>
     </>

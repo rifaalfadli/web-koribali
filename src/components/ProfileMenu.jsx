@@ -12,36 +12,7 @@ export default function ProfileMenu() {
   const [showTooltip, setShowTooltip] = useState(false);
   // const [username, setUsername] = useState("");
 
-  const {user, loading} = useUser()
-  // console.log("Rendering ProfileMenu, user data:", user);
-
-  
-  // useEffect(() => {
-  //   if(user){
-  //     setUsername(user.username)
-  //   }
-  // }, [user])
-
-  // Ambil user berdasarkan ID di cookie
-  // useEffect(() => {
-  //   const fetchUser = async () => {
-  //     try {
-  //       const userCookie = Cookies.get("user");
-  //       if (!userCookie) return;
-
-  //       const { id } = JSON.parse(userCookie);
-  //       const res = await fetch(`http://localhost:5000/anggota/${id}`);
-  //       if (!res.ok) throw new Error("Failed to fetch user data");
-
-  //       const data = await res.json();
-  //       setUsername(data.fullname);
-  //     } catch (error) {
-  //       console.error("Error fetching user:", error);
-  //     }
-  //   };
-
-  //   fetchUser();
-  // }, []);
+  const { user, loading } = useUser();
 
   // Tutup menu saat klik di luar
   useEffect(() => {
@@ -53,6 +24,19 @@ export default function ProfileMenu() {
     document.addEventListener("click", handleClickOutside);
     return () => document.removeEventListener("click", handleClickOutside);
   }, []);
+
+  if (loading) return null;
+
+  if (!user) {
+    return (
+      <div className="flex gap-4 w-32 justify-center items-center">
+        <Link to="/login" className="profile-link">
+          Login
+        </Link>
+        <Link to="/register">Register</Link>
+      </div>
+    );
+  }
 
   return (
     <div
