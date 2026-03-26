@@ -11,6 +11,7 @@ import Proyek from "./pages/Proyek";
 import NotFoundPage from "./pages/404";
 import LayoutProtected from "./components/LayoutProtected";
 import ScrollToTop from "./components/shared/ScroolTop";
+import PoleMeasurementReport from "./pages/ReportPage";
 
 function App() {
   return (
@@ -24,7 +25,7 @@ function App() {
         <Route path="proyek" element={<Proyek />} />
         <Route path="galeri" element={<Galeri />} />
         <Route path="kontak" element={<Kontak />} />
-        <Route path="*" element={<NotFoundPage />} />
+        <Route path="report" element={<PoleMeasurementReport />} />
 
         {/* Protected Route */}
         <Route
@@ -37,6 +38,7 @@ function App() {
         >
           <Route path="profile" element={<ProfilePage />} />
         </Route>
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </>
   );

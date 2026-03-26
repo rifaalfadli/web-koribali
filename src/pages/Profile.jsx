@@ -39,6 +39,10 @@ export default function ProfilePage() {
   const [lastFocus, setLastFocus] = useState(null);
   const handleFocus = (e) => setLastFocus(e.target.id);
 
+  const profileImage = user?.profile?.path_image_profile
+  ? `http://localhost:5000/${user.profile.path_image_profile}`
+  : "/images/avatar.svg";
+
   useEffect(() => {
     if (editMode && lastFocus) {
       setTimeout(() => {
@@ -78,7 +82,11 @@ export default function ProfilePage() {
     if (!file) return;
     const reader = new FileReader();
     reader.onloadend = () =>
-      setPhotoState((prev) => ({ ...prev, preview: reader.result }));
+      setPhotoState((prev) => ({ 
+        ...prev, 
+        preview: reader.result,
+        file : file
+      }));
     reader.readAsDataURL(file);
   };
 
@@ -86,15 +94,26 @@ export default function ProfilePage() {
     if (!updatedUser) return;
     try {
       const token = Cookies.get("access_token");
-      console.log(token, updatedUser);
+      
+      const formData = new FormData()
+
+      Object.entries(updatedUser).forEach(([key, value]) => {
+        formData.append(key, value ?? "")
+      })
+      // console.log('photostate:',photoState, photoState.file instanceof File)
+      if (photoState?.file) {
+        console.log('ini jalan photostate')
+        formData.append('profile_image', photoState.file)
+      }
+
+      // console.log('ini form data:', formData)
 
       const response = await fetch("http://localhost:5000/user/profile", {
         method: "PUT",
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(updatedUser),
+        body: formData,
       });
 
       const data = await response.json();
@@ -133,7 +152,7 @@ export default function ProfilePage() {
   };
 
   // Tampilkan pesan loading jika data belum tersedia
-  if (!user) return <div className="profile-Loading">Loading profile...</div>;
+  if (loading) return <div className="profile-Loading">Loading profile...</div>;
 
   // Komponen input
   const InputField = ({
@@ -250,7 +269,7 @@ export default function ProfilePage() {
           >
             <div className="profile-photo-section">
               <motion.img
-                src={photoState.preview || user.photo || "/images/avatar.svg"}
+                src={photoState.preview || profileImage}
                 alt="Profile"
                 className="profile-photo"
                 onClick={toggleFullImage}
@@ -417,9 +436,9 @@ export default function ProfilePage() {
                           <button
                             type="submit"
                             className={clsx("btn-save", "button-profile")}
-                            disabled={!isValid || !dirty}
-                            // disabled={false}
-                            onClick={() => console.log("clicked")}
+                            // disabled={!isValid || !dirty}
+                            disabled={false}
+                            // onClick={() => console.log("clicked")}
                           >
                             Save
                           </button>
@@ -473,7 +492,7 @@ export default function ProfilePage() {
               transition={{ duration: 0.3 }}
             >
               <img
-                src={photoState.preview || user.photo || "/images/avatar.svg"}
+                src={photoState.preview || profileImage}
                 alt="Full Profile"
                 className="image-full"
               />

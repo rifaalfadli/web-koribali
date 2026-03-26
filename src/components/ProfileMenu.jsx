@@ -14,6 +14,10 @@ export default function ProfileMenu() {
 
   const { user, loading } = useUser();
 
+  const profileImage = user?.profile?.path_image_profile
+  ? `http://localhost:5000/${user.profile.path_image_profile}`
+  : "/images/avatar.svg";
+
   // Tutup menu saat klik di luar
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -45,7 +49,7 @@ export default function ProfileMenu() {
       onMouseLeave={() => setShowTooltip(false)}
     >
       <img
-        src="/images/avatar.svg"
+        src={profileImage}
         alt="User"
         className="profile-avatar"
         onClick={() => setShowProfileMenu(!showProfileMenu)}
@@ -58,7 +62,7 @@ export default function ProfileMenu() {
       {showProfileMenu && (
         <div className="profile-popup">
           <img
-            src="/images/avatar.svg"
+            src={profileImage}
             alt="Profile"
             className="profile-popup-img"
           />

@@ -86,7 +86,7 @@ function Register() {
       setShowPopup(true);
       resetForm();
 
-      navigate('/')
+      navigate('/login')
       // setTimeout(() => {
       //   navigate("/login");
       // }, 1500);

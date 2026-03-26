@@ -10,7 +10,7 @@ const Logout = () => {
 
   function handleLogout() {
     Cookies.remove("access_token"); // hapus cookie
-    navigate("/login"); // redirect ke login
+    navigate("/"); // redirect ke login
   }
 
   return (
